@@ -49,7 +49,7 @@ func serve() {
 		os.Exit(1)
 	}
 	_ = NewView(tdb)
-	svr := http.Server{Addr: ":80"}
+	svr := http.Server{Addr: ":8080"}
 	done := make(chan struct{})
 	go func() {
 		sigc := make(chan os.Signal, 100)
