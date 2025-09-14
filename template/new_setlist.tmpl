@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>New Setlist</title>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        {{ template "head" .}}
+        <div id="main">
+            <p>Creating a new setlist. The first step is to give it a name. Feel free to be descriptive
+            as the field isn't really limited (just consider screen real estate).</p>
+            <p>After submitting a name, you can add sets to it.</p>
+            <form class='edit' method='post' action="/setlist/save">
+                <fieldset><legend>Setlist Information</legend>
+                    <label for="Name">Name:</label>
+                    <input type="text" name="Name" id="name" value="{{.ProperName}}"/><br/>
+                </fieldset>
+                <input type="submit" value="Save"/>
+            </form>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

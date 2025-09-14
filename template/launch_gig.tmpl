@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>Giggin' w/Noodlizer</title>
+    </head>
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <h2>Pick a Setlist:</label>
+            <table class="padded">
+            {{ range . -}}
+            <tr>
+                <td>Launch: <a href="/gig/setlist/{{.Id}}">{{.ProperName}}</a></td>
+                <td>Created: {{ .CreatedAt }}</td>
+            </tr>
+            {{ end -}}
+        </form>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+<html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Track</title>
+        <style>
+        </style>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>Track {{ .ProperTitle }}</title>
+    </head>
+    <body>
+        {{ template "head" .}}
+        <div id="main">
+            <div id="content">
+            <fieldset id="track-info"><legend>Track Information <a href="/track/{{.Id}}/edit">EDIT</a></legend>
+                <span class="main-field"> {{ .ProperTitle }}</span>
+                <p>
+                    <span class="tempo"><label>Tempo (BPM): </label> {{ .Tempo }} BPM</span>
+                    <span class="lead"><label>Lead Vox: </label> {{ .Vox.ProperName }}</span>
+                    <span class="classification"><label>Classification: </label> {{ .Era.ProperName }} {{ .Genre.ProperName }}</span>
+                    <span class="keytone"><label>Keyboard Tone: </label> {{if ne .KeyTone ""}}{{ .KeyTone }}{{else}}None{{end}}</span>
+                    <span class="kit"><label>Kit Setting (efnote): </label> {{ .Kit.ProperName }}</span>
+                </p>
+                <span class="click">{{ if .Click }} This track has a Clicktrack {{ else }} NO CLICKTRACK AVAILABLE {{ end }}</span>
+            </fieldset>
+            <fieldset><legend>Lyrics</legend>
+            {{ .Lyrics.PrettyText 0 }}
+            </fieldset>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

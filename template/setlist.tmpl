@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>Setlist: {{.ProperName}}</title>
+    </head>
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <div id="content">
+            <fieldset><legend>Setlist Infomation<a href="/setlist/{{.Id}}/edit">EDIT</a></legend>
+                <span class="main-field">{{ .ProperName }}</span><br/>
+                <span class="sub-field">{{ .CreatedAt }}</span>
+            </fieldset>
+            <fieldset><legend>Associated Sets</legend>
+                <table id="sets">
+                    <tr>
+                        <th><a href="#">Name</a></th>
+                        <th><a href="#">Track Count</a></th>
+                    </tr>
+                    {{ range .Sets }}
+                    <tr>
+                        <td><a href="/set/{{.Id}}">{{ .ProperName }}</a></td>
+                        <td>{{ .TrackCount }}</td>
+                    </tr>
+                    {{ end }}
+                </table>
+            </fieldset>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

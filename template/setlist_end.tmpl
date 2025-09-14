@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>{{.Status}} of Setlist: {{.Name}}</title>
+    </head>
+    <body>
+        {{ template "gig_head" . }}
+        <div id="main">
+            <div id="content">
+            <h2>{{ .Name }}</h2>
+            <table class="padded links">
+                <tr>
+                    {{ if eq .Status "End" }}
+                    <td><a href="/gig/prev/{{.Id}}">PREVIOUS SET</a></td>
+                    <td>NEXT SET</td>
+                    {{ else }}
+                    <td>PREVIOUS SET
+                    <td><a href="/gig/next/{{.Id}}">NEXT SET</a></td>
+                    {{ end }}
+                </tr>
+            </table>
+            <div id="notice">
+                <span class="big">{{.Status}} Of Setlist.</span><br/>
+                {{ if eq .Status "End" }}
+                <span class="big"><a href="/gig/end/{{.Id}}">End Gig</a></span>
+                {{ end }}
+            </div>
+            </div>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+<html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>All Genres</title>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+    {{ template "head" .}}
+        <div id="main">
+            <div id="content">
+                <table id='genres' class="padded">
+                    <tr>
+                        <th colspan=2><a href="#">Genre</a></th>
+                    </tr>
+                    {{ range .Genres }}
+                    <tr>
+                        <td><a href="/genre/{{.Id}}">{{.Name}}</a></td>
+                        <td><a href="/genre/{{.Id}}/edit">edit</a></td>
+                    </tr>
+                    </tr>
+                    {{ end }} <!-- range -->
+                </table>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

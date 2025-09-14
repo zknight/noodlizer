@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>All Eras</title>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        {{ template "head" .}}
+        <div id="main">
+            <div id="content">
+                <table id='eras' class="padded">
+                    <tr>
+                        <th colspan=2><a href="#">Eras</a></th>
+                    </tr>
+                    {{ range .Eras }}
+                    <tr>
+                        <td><a href="/era/{{.Id}}">{{.ProperName}}</a></td>
+                        <td><a href="/era/{{.Id}}/edit">edit</a></td>
+                    </tr>
+                    {{ end }} <!-- range -->
+                </table>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

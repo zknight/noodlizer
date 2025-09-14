@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{.Kind}}</title>
+        <style>
+
+        span.main-field {
+            font-size:16pt;
+            font-weight:bold;
+        }
+        label {
+            font-weight:bold;
+        }
+        </style>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>Era {{ .Obj.ProperName }}</title>
+    </head>
+    <body>
+        {{ template "head" .}}
+        <div id="main">
+            <div id="content">
+            <fieldset><legend>{{ .Kind }} Information <a href="/{{.Kind}}/{{.Id}}/edit">[edit]</a></legend>
+                <span class="main-field"> {{ .Obj.ProperName }}</span><br/>
+            </fieldset>
+            <fieldset><legend>Associated Songs</legend>
+                <table id='tracks'>
+                    <tr>
+                        <th><a href="#">Title</a></th>
+                        <th><a href="#">Tempo (BPM)</a></th>
+                        <!--th><a href="#">Vocalist</a></th -->
+                        <th><a href="#">Era</a></th>
+                        <th><a href="#">Genre</a></th>
+                        <th><a href="#">Kit</a></th>
+                        <th><a href="#">Clicktrack?</a></th>
+                        <th colspan=2></th>
+                    </tr>
+                    {{ range .Tracks }}
+                    <tr>
+                        <td><a href="/track/{{.Id}}">{{.ProperTitle}}</a></td>
+                        <td>{{.Tempo}}</td>
+                        <!-- td><a href="/vox/{{.Vox.Id}}">{{.Vox.ProperName}}</a></td-->
+                        <td><a href="/era/{{.Era.Id}}">{{.Era.ProperName}}</a></td>
+                        <td><a href="/genre/{{.Genre.Id}}">{{.Genre.ProperName}}</a></td>
+                        <td><a href="/kit/{{.Kit.Id}}">{{.Kit.ProperName}}</a></td>
+                        <td>{{if .Click}}yes{{else}}no{{end}}</a></td>
+                        <td><a href="/track/{{.Id}}/edit">edit</a></td>
+                        <td><a href="/track/{{.Id}}/del">delete</a></td>
+                    </tr>
+                    {{ end }} <!-- range -->
+                </table>
+            </fieldset>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

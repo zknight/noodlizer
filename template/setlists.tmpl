@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>All Setlists</title>
+    </head>
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <div id="content">
+                <div class="submenu"><a href="setlist/create">New Setlist</a></div>
+                <table id="setlists" class="padded">
+                    <tr>
+                        <th><a href="#">Name</a></th>
+                        <th><a href="#">Set Count</a></th>
+                        <th><a href="#">Created</a></th>
+                    </tr>
+                    {{ range . }}
+                    <tr>
+                        <td><a href="/setlist/{{.Id}}">{{.ProperName}}</td>
+                        <td class="center">{{.SetCount}}</td>
+                        <td>{{.CreatedAt}}</td>
+                    </tr>
+                    {{ end }}
+                </table>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

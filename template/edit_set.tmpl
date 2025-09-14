@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>
+        {{if eq .Action "update"}}
+            Editing Set: {{.Set.ProperName}}
+        {{else}}
+            Creating New Set
+        {{ end }}
+        </title>
+    </head>
+    <!-- have: .Set, .Tracks -->
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <div id="content">
+                <form class='edit' method='post' action="/setlist/{{.Set.SetlistId}}/{{.Action}}_set">
+                    <fieldset><legend>Set Information</legend>
+                    <label for="Name">Name:</label>
+                    <input type="text" name="Name" id="name" value="{{.Set.ProperName}}" />
+                    <label style="margin-left:10px;" for="Setnum">Set Number</label>
+                    <input type="text" id="setnum" name="Setnum" value="{{.Set.SetNum}}" />
+                    <input type="hidden" name="SetId" value="{{.Set.Id}}"/>
+                    </fieldset>
+                    <input type="submit"/>
+                </form>
+                <fieldset><legend>Songs:</legend>
+                <div class="row-order">
+                    {{ $sid := .Set.Id }}
+                    <div class="songlist"><!--h2>Songs in Set</h2-->
+                        {{ $i := 1 }}
+                        <table class="padded">
+                            <tr><th colspan=5>Songs in Set</th></tr>
+                        {{ range .Set.Tracks }}
+                            <tr>
+                                <td>#{{$i}}:</td>
+                                <td>{{ .ProperTitle }}</td>
+                                <td>{{ .Vox.ProperName }}</td>
+                                <td>{{ .Era.ProperName }} {{ .Genre.ProperName }}</td>
+                                <td><a href="/set/{{$sid}}/del_track/{{.Id}}">Remove</a></td>
+                            </tr>
+                            {{ $i = inc $i }}
+                        {{ end }}
+                        </table>
+                    </div>
+                    <div class="songlist"><!--h2>Available Songs</h2-->
+                        <table class="padded">
+                            <tr><th colspan=4>Available Songs</th></tr>
+                        {{ range .Tracks }}
+                            <tr>
+                                <td>{{ .ProperTitle }}</td>
+                                <td>{{ .Vox.ProperName }}</td>
+                                <td>{{ .Era.ProperName }} {{ .Genre.ProperName }}</td>
+                                <td><a href="/set/{{$sid}}/add_track/{{.Id}}">Add</a></td>
+                            </tr>
+                        {{ end }}
+                        </table>
+                    </div>
+                </div>
+                </fieldset>
+            </div>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+</html>

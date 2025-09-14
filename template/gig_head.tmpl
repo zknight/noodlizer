@@ -1,0 +1,17 @@
+{{ define "gig_head" }}
+<div id="header">
+    <div id="page-title"><h2>Setlist Noodlizer</h2></div>
+    <div id="menu">
+        <form id='syncform' method='post'> <!--action='/publish'-->
+            <table class='padded links'>
+                <tr>
+                    <td class="left" style="width:10%"><input name='wait' id='wait' class='notify' type='submit' value='ONE MOMENT, PLEASE...' formaction='/wait' /></td>
+                    <td class="left"><input name='ready' id='ready' class='notify' type='submit' value='I AM READY.' formaction='/ready'/></td>
+                    <td class="right"><a href="/gig/end/{{.Id}}">Exit Gig</a></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script type='text/javascript' src='/static/ws.js'></script>
+</div>
+{{ end }}

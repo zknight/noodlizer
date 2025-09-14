@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <link rel="stylesheet" href="/static/gig.css">
+        <title>Giggin' w/Noodlizer</title>
+    </head>
+    <body>
+        {{ template "gig_head" . }}
+        <div id="overlay">
+        SOMEBODY'S NOT READY...
+        </div>
+        <div id="main">
+            <div id="content">
+                <h2>{{ .Name }}</h2>
+                <h3>{{ .SetName }}</h3>
+                <table class="padded links"><tr><td class="left"><a href="/gig/prev/{{.Id}}">PREVIOUS SONG</a></td><td class="right"><a href="/gig/next/{{.Id}}">NEXT SONG</a></td></tr></table>
+                <fieldset id="track-info"><legend><span class='loud'>{{ .Title }}</span> -- {{.Tempo}} BPM {{ if ne .KeyTone "" }} -- Keyboard Tone: {{.KeyTone}} {{ end }}</legend>
+                {{ .Lyrics }}
+            </fieldset>
+            </div>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+<html>

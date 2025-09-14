@@ -1,0 +1,272 @@
+/* style stylesheet lol */
+* {
+    background-color: #111;
+}
+a {
+    text-decoration: none;
+    color:lightgoldenrodyellow;
+}
+a:hover {
+    color:goldenrod;
+}
+body {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+#main {
+    background-color: #111;
+    color:#ddd;
+    /*border:1px solid white;*/
+    width: 100%;
+    display: flex;
+    align-items:center;
+}
+
+#content {
+    margin: auto;
+}
+
+#header {
+    margin-bottom: 10px;
+    text-align:center;
+    background-color: midnightblue;
+    color:darkgoldenrod;
+    width: 100%;
+    /*border:1px solid white;*/
+}
+
+#menu {
+    text-align:center;
+    /*width: 600px;*/
+}
+
+input[type=text] {
+    color: #ddd;
+    background-color:#005;
+    padding: 0.25em 0.5em;
+    border: 2px solid goldenrod;
+    border-radius: 4px;
+}
+
+input[type=submit], select {
+    color: goldenrod;
+    background-color: midnightblue;
+}
+
+textarea {
+    color: #ccc;
+}
+
+fieldset {
+    border-color: #335;
+}
+legend {
+    font-size:16pt;
+    background-color:#335;
+}
+legend a {
+    text-decoration: none;
+    padding: 2px 10px;
+    background-color:darkgoldenrod;
+    color:aliceblue;
+    border: 1px solid #005;
+    border-radius: 4px;
+}
+legend a:hover {
+    background-color:gold;
+    border: 1px solid aliceblue;
+}
+
+div.row-order {
+    display:flex;
+    flex-direction: row;
+    min-width: 400px;
+}
+
+div.songlist {
+    padding: 2px 10px;
+    border: 1px solid darkgoldenrod;
+    margin: 10px;
+    max-height: 500px;
+    overflow: auto;
+}
+
+#menu a {
+    text-decoration: none;
+    padding: 2px 10px;
+    background-color:darkgoldenrod;
+    color:aliceblue;
+    border: 1px solid #005;
+    border-radius: 4px;
+}
+#menu a:hover {
+    background-color:gold;
+    border: 1px solid aliceblue;
+}
+/* index only? */
+#main-menu {
+    font-size:16pt;
+}
+#main-menu a, table.links a {
+    text-decoration: none;
+    padding: 2px 10px;
+    background-color:darkgoldenrod;
+    color:aliceblue;
+    border: 1px solid #005;
+    border-radius: 4px;
+}
+#main-menu a:hover,
+table.links a:hover {
+    background-color:gold;
+    border: 1px solid aliceblue;
+}
+#main-menu ul {
+    list-style-type: none;
+}
+
+table.links {
+    width: 100%;
+}
+table.links td.left {
+    text-align: left;
+}
+table.links td.right {
+    text-align:right;
+}
+table.padded td {
+    padding: 2px 10px;
+}
+table.lyrics {
+    color: #ccc;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+td.lyrics span.blue {
+    color: #66f;
+}
+td.lyrics span.red {
+    color: #f55;
+}
+td.lyrics span.green {
+    color: #5f5;
+}
+td.lyrics span.purple {
+    color: #93d;
+}
+td.lyrics span.black {
+    color: #ccc;
+}
+th {
+    text-align: center;
+    /*border: 1px solid red;*/
+}
+/* track listing */
+/*table#tracks*/ th a {
+    text-decoration:none;
+    color:lightgoldenrodyellow;
+}
+/*table#tracks*/ th a:hover {
+    color:goldenrod;
+}
+/*table#tracks*/ td a {
+    text-decoration:none;
+    color:goldenrod;
+}
+/*table#tracks*/ td a:hover {
+    color:darkgoldenrod;
+}
+
+form label {
+    font-size:14pt;
+    font-weight:bold;
+}
+
+.main-field {
+    font-size: 16pt;
+    font-weight: bold;
+}
+
+.sub-field {
+    font-size: 10pt;
+}
+
+/* track and gig track stuff */
+span.main-field {
+    font-size:16pt;
+    font-weight:bold;
+}
+span.tempo {
+    font-size:14pt;
+    margin-left:20px;
+    color:#aaa;
+}
+span.lead {
+    font-size:10pt;
+    margin-left:20px;
+    color:#aaa;
+}
+span.classification {
+    font-size:10pt;
+    margin-left:20px;
+    color:#aaa;
+}
+span.kit {
+    font-size:10pt;
+    margin-left:20px;
+    color:#aaa;
+}
+span.click {
+    font-size:8pt;
+    color:#ccc;
+}
+label {
+    font-weight:bold;
+}
+td.lyrics {
+    /*width: 75%;*/
+    padding: 0px 10px; 
+    border-bottom: 1px dotted darkgoldenrod;
+}
+td.note {
+    /*width: 10%;*/
+    background-color: #000;
+    color: #999;
+    padding: 0px 10px;
+    border-bottom: 1px dotted gray;
+} 
+.submenu a{
+    padding: 2px 10px;
+    background-color:midnightblue; 
+    color:goldenrod;
+    border:1px solid gold;
+    border-radius: 4px;
+}
+.submenu a:hover {
+    background-color:#66f;
+    color:lightgoldenrodyellow;
+    border:1px solid white;
+    border-radius: 4px;
+}
+.big {
+    font-size: 30pt;
+}
+.notice {
+    width: 100%;
+    text-align:center;
+    border: 1px solid darkgoldenrod;
+}
+.center {
+    text-align:center;
+}
+.kit {
+    border:1px dotted gold;
+}
+.loud {
+    font-weight: bold;
+    background-color:#335;
+    margin: 2px;
+}

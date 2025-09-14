@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit Track "{{ .Track.ProperTitle }}"</title>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        {{ template "head" .}}
+        <div id="main">
+            <form class='edit' method="post" action="/track/{{.Track.Id}}/update">
+                <fieldset><legend>Track Information</legend>
+                    <label for="Title">Track Title:</label>
+                    <input type="text" name="Title" id="title" value="{{.Track.ProperTitle}}"/>
+                    <label for="Tempo">Tempo:</label>
+                    <input type="text" name="Tempo" id="tempo" value="{{.Track.Tempo}}"/>BPM
+                </fieldset>
+                <fieldset><legend>Lead Vocalist</legend>
+                    <label for="Vox">Vocalist: </label>
+                    <!--input type="checkbox" name="Vox" id="click" {{if .Track.Click}}checked{{end}}/-->
+                    <select name="Vox" id="vox-select">
+                    {{ range .Voxes -}}
+                        <option value="{{ .Id }}" {{ if eq .Id $.Track.Vox.Id -}}selected{{ end -}}>{{ .ProperName }}</option>
+                    {{ end -}}
+                    </select>
+                </fieldset>
+                <fieldset><legend>Classification</legend>
+                    <label for="Era">Era: </label>
+                    <select name="Era" id="era-select">
+                    {{ range .Eras -}}
+                        <option value="{{ .Id }}" {{ if eq .Id $.Track.Era.Id -}}selected{{ end -}}>{{ .ProperName }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="Genre">Genre: </label>
+                    <select name="Genre" id="genre-select">
+                    {{ range .Genres -}}
+                        <option value="{{ .Id }}" {{ if eq .Id $.Track.Genre.Id -}}selected{{ end -}}>{{ .ProperName }}</option>
+                    {{ end }}
+                    </select>
+                </fieldset>
+                <fieldset><legend>Keyboard</legend>
+                    <label for="KeyTone">Tone Selection</lavel>
+                    <input type="text" name="KeyTone" id="keytone" value="{{.Track.KeyTone}}"/>
+                </fieldset>
+                <fieldset><legend>Drummer Stuff...</legend>
+                    <label for="Kit">Kit Setting (efnote)</label>
+                    <select name="Kit" id="kit-select">
+                    {{ range .Kits -}}
+                        <option value="{{ .Id }}" {{ if eq .Id $.Track.Kit.Id -}}selected{{ end -}}>{{ .ProperName }}</option>
+                    {{ end }}
+                    </select>
+                    <label for="Click">Has Clicktrack? </label>
+                    <input type="checkbox" name="Click" id="click" {{if .Track.Click}}checked{{end}}/>
+                </fieldset>
+                <input type="submit"/>
+            </form>
+            <form class='edit' method="post" action="/track/{{.Track.Id}}/update_lyrics">
+                <fieldset><legend>Lyrics</legend>
+                    <input type="hidden" name="lyrics_id" value="{{.Track.Lyrics.Id}}"/>
+                    <textarea class="lyrics" name="lyrics" rows="20" cols="80">{{.Track.Lyrics.RawText}}</textarea>
+                </fieldset>
+                <input type="submit"/>
+            </form>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+</html>

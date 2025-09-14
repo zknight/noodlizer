@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>Setlist: {{.ProperName}}</title>
+    </head>
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <div id="content">
+            </div>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+<html>

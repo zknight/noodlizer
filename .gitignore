@@ -1,0 +1,7 @@
+*.db
+*.bak
+*.sqlite3-query
+*.html
+*.sw?
+.DS_Store
+*copy

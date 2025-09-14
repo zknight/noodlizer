@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>{{.Status}} of Set {{.SetName}}</title>
+    </head>
+    <body>
+        {{ template "gig_head" . }}
+        <div id="main">
+            <div id="content">
+            <h2>{{ .Name }}</h2>
+            <h3>{{ .SetName }}</h3>
+            <table class="padded links"><tr><td><a href="/gig/prev/{{.Id}}">PREVIOUS SET</a></td><td><a href="/gig/next/{{.Id}}">NEXT SET</a></td></tr></table>
+            <span class="big">{{.Status}} Of Set.</span>
+            </div>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+<html>

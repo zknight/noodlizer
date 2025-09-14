@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>All Kits</title>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        {{template "head" .}}
+        <div id="main">
+            <div id="content">
+                <table id='kits' class="padded">
+                    <tr>
+                        <th colspan=2><a href="#">Kits</a></th>
+                    </tr>
+                    {{ range .Kits }}
+                    <tr>
+                        <td><a href="/kit/{{.Id}}">{{.ProperName}}</a></td>
+                        <td><a href="/kit/{{.Id}}/edit">edit</a></td>
+                    </tr>
+                    {{ end }} <!-- range -->
+                </table>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

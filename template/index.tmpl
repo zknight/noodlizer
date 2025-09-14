@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>N o o d l i z e r</title>
+    </head>
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <div id="content">
+            <p><span class="big">This is the Setlist Noodlizer.</span></p>
+            <p style="text-align:center;">What would you like to do?</p>
+            <div id="main-menu">
+                <ul>
+                <li><a href="/gig">Start a Gig</a> to display lyrics for a Setlist</li>
+                <li><a href="/tracks/">Manage Songs</a></li>
+                <li><a href="/setlists/">List/Create/Update Setlist</a></li>
+                <li>Manage classification: <a href="/eras">Eras</a> and <a href="/genres">Genres</a>
+                </ul>
+            </div>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+<html>

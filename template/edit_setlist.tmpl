@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit Setlist "{{ .ProperName }}"</title>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        {{ template "head" .}}
+        <div id="main">
+            <form class='edit' method='post' action="/setlist/{{.Id}}/update">
+                <fieldset><legend>Setlist Information</legend>
+                    <label for="Name">Name:</label>
+                    <input type="text" name="Name" id="name" value="{{.ProperName}}"/><br/>
+                    <label>Created at:</label>
+                    {{ .CreatedAt }}<br/>
+                    <input type="submit" value="Change Name"/>
+                </fieldset>
+                <fieldset><legend>Sets</legend>
+                <table class="padded">
+                {{ range .Sets }}
+                    <tr>
+                        <td><a href="/set/{{.Id}}">{{ .ProperName }}</a></td>
+                        <td>contains {{ .TrackCount }} songs</td>
+                    </tr>
+                {{ end }}
+                    <tr>
+                        <td colspan=2><a href="/setlist/{{.Id}}/create_set/{{ len .Sets }}">Add a set</a></td>
+                    </tr>
+                </fieldset>
+            </form>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+</html>

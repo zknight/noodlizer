@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>Set: {{.ProperName}}</title>
+    </head>
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <div id="content">
+            <fieldset><legend>Set Infomation<a href="/set/{{.Id}}/edit">EDIT</a></legend>
+                <span class="main-field">{{ .ProperName }}</span>
+            </fieldset>
+            <fieldset><legend>Songs:</legend>
+            <table id='tracks' class="padded">
+                <!--{{ $sid := .Id }}--> {{ $num := 1 }}
+                {{ range .Tracks }}
+                <tr>
+                    <td>#{{$num}}</td>
+                    <!--td><a href="/track/{{$sid}}">{{ .ProperTitle }}</td-->
+                    <td><a href="/track/{{.Id}}">{{ .ProperTitle }}</td>
+                    <td><b>{{ .Tempo }} BPM</b></td>
+                    <td>{{ .Vox.ProperName }}</td>
+                    <td>{{ .Era.ProperName }} {{ .Genre.ProperName }}</td>
+                    <td class="kit">{{ .Kit.ProperName }}</td>
+                </tr>
+                    {{ $num = inc $num }}
+                {{ end }}
+            </fieldset>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+</html>
+

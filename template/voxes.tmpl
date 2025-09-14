@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>All Vocalists</title>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        {{ template "head" .}}
+        <div id="main">
+            <div id="content">
+                <table id='voxes' class="padded">
+                    <tr>
+                        <th colspan=2><a href="#">Vocalist</a></th>
+                    </tr>
+                    {{ range .Voxes }}
+                    <tr>
+                        <td><a href="/vox/{{.Id}}">{{.ProperName}}</a></td>
+                        <td><a href="/vox/{{.Id}}/edit">edit</a></td>
+                    </tr>
+                    {{ end }} <!-- range -->
+                </table>
+            </div>
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>
