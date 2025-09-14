@@ -8,10 +8,12 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+
+	"github.com/zknight/noodlizer/db"
 )
 
 type View struct {
-	db      *DB
+	db      *db.DB
 	index   *template.Template
 	ws_mtx  sync.Mutex
 	subs    map[*subscriber]struct{}
@@ -19,14 +21,14 @@ type View struct {
 }
 
 type trackInfo struct {
-	Track  Track
-	Voxes  []Vox
-	Eras   []Era
-	Genres []Genre
-	Kits   []Kit
+	Track  db.Track
+	Voxes  []db.Vox
+	Eras   []db.Era
+	Genres []db.Genre
+	Kits   []db.Kit
 }
 
-func NewView(db *DB) *View {
+func NewView(db *db.DB) *View {
 	v := &View{
 		db:      db,
 		subs:    make(map[*subscriber]struct{}),
@@ -104,7 +106,7 @@ func (v *View) ShowSet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("show Set", id)
-	set, err := v.db.getSet(int64(id))
+	set, err := v.db.GetSet(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -122,20 +124,20 @@ func (v *View) EditSet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("edit Set", id)
-	set, err := v.db.getSet(int64(id))
+	set, err := v.db.GetSet(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	tracks, err := v.db.getAllTracks()
+	tracks, err := v.db.GetAllTracks()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
 
 	err = v.index.ExecuteTemplate(w, "edit_set.tmpl", struct {
-		Set    Set
-		Tracks []Track
+		Set    db.Set
+		Tracks []db.Track
 		Action string
 	}{Set: set, Tracks: tracks, Action: "update"})
 	if err != nil {
@@ -154,11 +156,11 @@ func (v *View) CreateSet(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, err.Error())
 		return
 	}
-	s := Set{SetlistId: int64(id), SetNum: setnum}
-	t := []Track{}
+	s := db.Set{SetlistId: int64(id), SetNum: setnum}
+	t := []db.Track{}
 	err = v.index.ExecuteTemplate(w, "edit_set.tmpl", struct {
-		Set    Set
-		Tracks []Track
+		Set    db.Set
+		Tracks []db.Track
 		Action string
 	}{Set: s, Tracks: t, Action: "save"})
 	if err != nil {
@@ -180,8 +182,8 @@ func (v *View) SaveSet(w http.ResponseWriter, r *http.Request) {
 	}
 	name := r.PostFormValue("Name")
 	setnum, _ := strconv.Atoi(r.PostFormValue("Setnum"))
-	s := Set{SetlistId: int64(id), SetNum: setnum, Name: name}
-	_, err = v.db.addSet(s)
+	s := db.Set{SetlistId: int64(id), SetNum: setnum, Name: name}
+	_, err = v.db.AddSet(s)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -207,8 +209,8 @@ func (v *View) UpdateSet(w http.ResponseWriter, r *http.Request) {
 	name := r.PostFormValue("Name")
 	setnum, _ := strconv.Atoi(r.PostFormValue("Setnum"))
 	setid, _ := strconv.Atoi(r.PostFormValue("SetId"))
-	s := Set{Id: int64(setid), SetlistId: int64(id), SetNum: setnum, Name: name}
-	err = v.db.updateSet(s)
+	s := db.Set{Id: int64(setid), SetlistId: int64(id), SetNum: setnum, Name: name}
+	err = v.db.UpdateSet(s)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -229,7 +231,7 @@ func (v *View) AddTrackToSet(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, err.Error())
 		return
 	}
-	err = v.db.addTrackToSet(int64(sid), int64(tid))
+	err = v.db.AddTrackToSet(int64(sid), int64(tid))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -249,7 +251,7 @@ func (v *View) DelTrackFromSet(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, err.Error())
 		return
 	}
-	err = v.db.remTrackFromSet(int64(sid), int64(tid))
+	err = v.db.RemTrackFromSet(int64(sid), int64(tid))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -260,7 +262,7 @@ func (v *View) DelTrackFromSet(w http.ResponseWriter, r *http.Request) {
 
 func (v *View) ShowSetlists(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Show Setlists.")
-	setlists, err := v.db.getAllSetlists()
+	setlists, err := v.db.GetAllSetlists()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -278,7 +280,7 @@ func (v *View) ShowSetlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Show Setlist ", id)
-	setlist, err := v.db.getSetlist(int64(id))
+	setlist, err := v.db.GetSetlist(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -290,7 +292,7 @@ func (v *View) ShowSetlist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (v *View) CreateSetlist(w http.ResponseWriter, r *http.Request) {
-	setlist := Setlist{}
+	setlist := db.Setlist{}
 	err := v.index.ExecuteTemplate(w, "new_setlist.tmpl", setlist)
 	if err != nil {
 		io.WriteString(w, err.Error())
@@ -304,7 +306,7 @@ func (v *View) EditSetlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Edit Setlist")
-	setlist, err := v.db.getSetlist(int64(id))
+	setlist, err := v.db.GetSetlist(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -323,8 +325,8 @@ func (v *View) SaveSetlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	name := r.PostFormValue("Name")
-	s := Setlist{Name: name}
-	id, err := v.db.addSetlist(s)
+	s := db.Setlist{Name: name}
+	id, err := v.db.AddSetlist(s)
 	fmt.Printf("new setlist id:%d\n", id)
 	if err != nil {
 		io.WriteString(w, err.Error())
@@ -347,8 +349,8 @@ func (v *View) UpdateSetlist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	name := r.PostFormValue("Name")
-	s := Setlist{Id: int64(id), Name: name}
-	err = v.db.updateSetlist(s)
+	s := db.Setlist{Id: int64(id), Name: name}
+	err = v.db.UpdateSetlist(s)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -359,13 +361,13 @@ func (v *View) UpdateSetlist(w http.ResponseWriter, r *http.Request) {
 
 func (v *View) ShowAllTracks(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Show Tracks.")
-	tracks, err := v.db.getAllTracks()
+	tracks, err := v.db.GetAllTracks()
 	fmt.Println("track cnt: ", len(tracks))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	err = v.index.ExecuteTemplate(w, "tracks.tmpl", struct{ Tracks []Track }{Tracks: tracks})
+	err = v.index.ExecuteTemplate(w, "tracks.tmpl", struct{ Tracks []db.Track }{Tracks: tracks})
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
@@ -378,7 +380,7 @@ func (v *View) ShowTrack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Show Track ", id)
-	t, err := v.db.getTrack(int64(id))
+	t, err := v.db.GetTrack(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -396,27 +398,27 @@ func (v *View) EditTrack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Edit Track ", id)
-	t, err := v.db.getTrack(int64(id))
+	t, err := v.db.GetTrack(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	voxes, err := v.db.getAllVoxes()
+	voxes, err := v.db.GetAllVoxes()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	eras, err := v.db.getAllEras()
+	eras, err := v.db.GetAllEras()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	genres, err := v.db.getAllGenres()
+	genres, err := v.db.GetAllGenres()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	kits, err := v.db.getAllKits()
+	kits, err := v.db.GetAllKits()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -452,18 +454,18 @@ func (v *View) UpdateTrack(w http.ResponseWriter, r *http.Request) {
 	kit_id, _ := strconv.Atoi(r.PostForm["Kit"][0])
 	key_tone := r.PostForm["KeyTone"][0]
 
-	t := Track{
+	t := db.Track{
 		Id:      int64(id),
 		Title:   title,
 		Tempo:   tempo,
 		Click:   click,
 		KeyTone: key_tone,
-		Vox:     Vox{Id: int64(vox_id)},
-		Era:     Era{Id: int64(era_id)},
-		Genre:   Genre{Id: int64(genre_id)},
-		Kit:     Kit{Id: int64(kit_id)},
+		Vox:     db.Vox{Id: int64(vox_id)},
+		Era:     db.Era{Id: int64(era_id)},
+		Genre:   db.Genre{Id: int64(genre_id)},
+		Kit:     db.Kit{Id: int64(kit_id)},
 	}
-	err = v.db.updateTrack(t)
+	err = v.db.UpdateTrack(t)
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
@@ -491,15 +493,15 @@ func (v *View) UpdateLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("lyrics_id from form:", lyrics_id)
-	lyrics := Lyrics{Id: int64(lyrics_id), RawText: r.PostFormValue("lyrics")}
+	lyrics := db.bLyrics{Id: int64(lyrics_id), RawText: r.PostFormValue("lyrics")}
 	if lyrics.Id == 0 {
-		_, err = v.db.addLyrics(id, lyrics)
+		_, err = v.db.AddLyrics(id, lyrics)
 		if err != nil {
 			io.WriteString(w, err.Error())
 			return
 		}
 	} else {
-		err = v.db.updateLyrics(lyrics)
+		err = v.db.UpdateLyrics(lyrics)
 		if err != nil {
 			io.WriteString(w, err.Error())
 		}
@@ -514,12 +516,12 @@ func (v *View) UpdateLyrics(w http.ResponseWriter, r *http.Request) {
 
 func (v *View) ShowVoxes(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Show Voxes.")
-	voxes, err := v.db.getAllVoxes()
+	voxes, err := v.db.GetAllVoxes()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	err = v.index.ExecuteTemplate(w, "voxes.tmpl", struct{ Voxes []Vox }{Voxes: voxes})
+	err = v.index.ExecuteTemplate(w, "voxes.tmpl", struct{ Voxes []db.Vox }{Voxes: voxes})
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
@@ -532,13 +534,13 @@ func (v *View) ShowVox(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Show Vox ", id)
-	vox, err := v.db.getVox(int64(id))
+	vox, err := v.db.GetVox(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
 
-	tracks, err := v.db.getTracksByVox(int64(id))
+	tracks, err := v.db.GetTracksByVox(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -546,8 +548,8 @@ func (v *View) ShowVox(w http.ResponseWriter, r *http.Request) {
 	x := struct {
 		Kind   string
 		Id     int
-		Obj    Child
-		Tracks []Track
+		Obj    db.Child
+		Tracks []db.Track
 	}{Kind: "Vox", Id: id, Obj: vox, Tracks: tracks}
 	err = v.index.ExecuteTemplate(w, "child.tmpl", x)
 	if err != nil {
@@ -557,12 +559,12 @@ func (v *View) ShowVox(w http.ResponseWriter, r *http.Request) {
 
 func (v *View) ShowEras(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Show Eras.")
-	eras, err := v.db.getAllEras()
+	eras, err := v.db.GetAllEras()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	err = v.index.ExecuteTemplate(w, "eras.tmpl", struct{ Eras []Era }{Eras: eras})
+	err = v.index.ExecuteTemplate(w, "eras.tmpl", struct{ Eras []db.Era }{Eras: eras})
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
@@ -575,13 +577,13 @@ func (v *View) ShowEra(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Show Era ", id)
-	era, err := v.db.getEra(int64(id))
+	era, err := v.db.GetEra(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
 
-	tracks, err := v.db.getTracksByEra(int64(id))
+	tracks, err := v.db.GetTracksByEra(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -589,8 +591,8 @@ func (v *View) ShowEra(w http.ResponseWriter, r *http.Request) {
 	x := struct {
 		Kind   string
 		Id     int
-		Obj    Child
-		Tracks []Track
+		Obj    db.Child
+		Tracks []db.Track
 	}{Kind: "Era", Id: id, Obj: era, Tracks: tracks}
 	err = v.index.ExecuteTemplate(w, "child.tmpl", x)
 	if err != nil {
@@ -600,12 +602,12 @@ func (v *View) ShowEra(w http.ResponseWriter, r *http.Request) {
 
 func (v *View) ShowGenres(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Show Genres.")
-	genres, err := v.db.getAllGenres()
+	genres, err := v.db.GetAllGenres()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	err = v.index.ExecuteTemplate(w, "genres.tmpl", struct{ Genres []Genre }{Genres: genres})
+	err = v.index.ExecuteTemplate(w, "genres.tmpl", struct{ Genres []db.Genre }{Genres: genres})
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
@@ -618,13 +620,13 @@ func (v *View) ShowGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Show Genre ", id)
-	genre, err := v.db.getGenre(int64(id))
+	genre, err := v.db.GetGenre(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
 
-	tracks, err := v.db.getTracksByGenre(int64(id))
+	tracks, err := v.db.GetTracksByGenre(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -632,8 +634,8 @@ func (v *View) ShowGenre(w http.ResponseWriter, r *http.Request) {
 	x := struct {
 		Kind   string
 		Id     int
-		Obj    Child
-		Tracks []Track
+		Obj    db.Child
+		Tracks []db.Track
 	}{Kind: "Genre", Id: id, Obj: genre, Tracks: tracks}
 	err = v.index.ExecuteTemplate(w, "child.tmpl", x)
 	if err != nil {
@@ -643,12 +645,12 @@ func (v *View) ShowGenre(w http.ResponseWriter, r *http.Request) {
 
 func (v *View) ShowKits(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Show Kits.")
-	kits, err := v.db.getAllKits()
+	kits, err := v.db.GetAllKits()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	err = v.index.ExecuteTemplate(w, "kits.tmpl", struct{ Kits []Kit }{Kits: kits})
+	err = v.index.ExecuteTemplate(w, "kits.tmpl", struct{ Kits []db.Kit }{Kits: kits})
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
@@ -661,13 +663,13 @@ func (v *View) ShowKit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Show Kit ", id)
-	kit, err := v.db.getKit(int64(id))
+	kit, err := v.db.GetKit(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
 
-	tracks, err := v.db.getTracksByKit(int64(id))
+	tracks, err := v.db.GetTracksByKit(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -675,8 +677,8 @@ func (v *View) ShowKit(w http.ResponseWriter, r *http.Request) {
 	x := struct {
 		Kind   string
 		Id     int
-		Obj    Child
-		Tracks []Track
+		Obj    db.Child
+		Tracks []db.Track
 	}{Kind: "Kit", Id: id, Obj: kit, Tracks: tracks}
 	err = v.index.ExecuteTemplate(w, "child.tmpl", x)
 	if err != nil {
@@ -686,7 +688,7 @@ func (v *View) ShowKit(w http.ResponseWriter, r *http.Request) {
 
 func (v *View) StartGig(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Start a gig")
-	setlists, err := v.db.getAllSetlists()
+	setlists, err := v.db.GetAllSetlists()
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -708,7 +710,7 @@ func (v *View) DoGig(w http.ResponseWriter, r *http.Request) {
 	// track of current song... temporary set?
 	// no form required. Just pass a parameter (hash) that references the information
 	// "pickle" a struct?
-	sl, err := v.db.getSetlist(int64(id))
+	sl, err := v.db.GetSetlist(int64(id))
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("DoGig.2: %s", err.Error()))
 		return
@@ -733,7 +735,7 @@ func (v *View) DoGig(w http.ResponseWriter, r *http.Request) {
 	data.Name = gig.ProperName()
 	data.SetName = gig.Sets[gig.CurSet].ProperName()
 	tid := gig.Sets[gig.CurSet].Tracks[gig.CurTrack].Id
-	track, err := v.db.getTrack(tid)
+	track, err := v.db.GetTrack(tid)
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("DoGig.4: %s", err.Error()))
 		return
@@ -841,7 +843,7 @@ func (v *View) ShowGigNext(w http.ResponseWriter, r *http.Request) {
 	data.SetName = g.Sets[g.CurSet].ProperName()
 	tid := g.Sets[g.CurSet].Tracks[g.CurTrack].Id
 	//fmt.Println("TRACK ID=", tid)
-	track, err := v.db.getTrack(tid)
+	track, err := v.db.GetTrack(tid)
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("ShowGigNext.4: %s", err.Error()))
 		return
@@ -944,7 +946,7 @@ func (v *View) ShowGigPrev(w http.ResponseWriter, r *http.Request) {
 	data.SetName = g.Sets[g.CurSet].ProperName()
 	tid := g.Sets[g.CurSet].Tracks[g.CurTrack].Id
 	fmt.Println("TRACK ID=", tid)
-	track, err := v.db.getTrack(tid)
+	track, err := v.db.GetTrack(tid)
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("ShowGigNext.4: %s", err.Error()))
 		return

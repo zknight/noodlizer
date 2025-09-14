@@ -1,4 +1,4 @@
-package main
+package db
 
 import (
 	"database/sql"
@@ -12,8 +12,8 @@ type DB struct {
 	db *sql.DB
 }
 
-func new_db(path string) (*DB, error) {
-	d, err := open_db(path)
+func NewDB(path string) (*DB, error) {
+	d, err := OpenDB(path)
 	if err != nil {
 		return nil, err
 	}
@@ -21,7 +21,7 @@ func new_db(path string) (*DB, error) {
 	return d, err
 }
 
-func open_db(path string) (*DB, error) {
+func OpenDB(path string) (*DB, error) {
 	d, err := sql.Open("sqlite", path)
 	if err != nil {
 		return nil, err
@@ -97,28 +97,28 @@ func (d *DB) init() error {
 	return err
 }
 
-func (d *DB) getVoxByName(name string) (int64, error) {
+func (d *DB) GetVoxByName(name string) (int64, error) {
 	q := fmt.Sprintf("select id from vox WHERE name = '%s';", name)
 	var id int64
 	err := d.db.QueryRow(q).Scan(&id)
 	return id, err
 }
 
-func (d *DB) getEraByName(name string) (int64, error) {
+func (d *DB) GetEraByName(name string) (int64, error) {
 	q := fmt.Sprintf("select id from era WHERE name = '%s';", name)
 	var id int64
 	err := d.db.QueryRow(q).Scan(&id)
 	return id, err
 }
 
-func (d *DB) getGenreByName(name string) (int64, error) {
+func (d *DB) GetGenreByName(name string) (int64, error) {
 	q := fmt.Sprintf("select id from genre WHERE name = '%s';", name)
 	var id int64
 	err := d.db.QueryRow(q).Scan(&id)
 	return id, err
 }
 
-func (d *DB) getKitByName(name string) (int64, error) {
+func (d *DB) GetKitByName(name string) (int64, error) {
 	q := fmt.Sprintf("select id from kit WHERE name = '%s';", name)
 	var id int64
 	err := d.db.QueryRow(q).Scan(&id)
@@ -135,47 +135,47 @@ from track
 	join kit on track.kit_id = kit.id
 `
 
-func (d *DB) getTracksByVox(vox_id int64) ([]Track, error) {
+func (d *DB) GetTracksByVox(vox_id int64) ([]Track, error) {
 	q := trackSelect + "where track.vox_id = $1;"
 	rows, err := d.db.Query(q, vox_id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	return d._extractTracks(rows)
+	return d.extractTracks(rows)
 }
 
-func (d *DB) getTracksByEra(era_id int64) ([]Track, error) {
+func (d *DB) GetTracksByEra(era_id int64) ([]Track, error) {
 	q := trackSelect + "where track.era_id = $1;"
 	rows, err := d.db.Query(q, era_id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	return d._extractTracks(rows)
+	return d.extractTracks(rows)
 }
 
-func (d *DB) getTracksByGenre(genre_id int64) ([]Track, error) {
+func (d *DB) GetTracksByGenre(genre_id int64) ([]Track, error) {
 	q := trackSelect + "where track.genre_id = $1;"
 	rows, err := d.db.Query(q, genre_id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	return d._extractTracks(rows)
+	return d.extractTracks(rows)
 }
 
-func (d *DB) getTracksByKit(kit_id int64) ([]Track, error) {
+func (d *DB) GetTracksByKit(kit_id int64) ([]Track, error) {
 	q := trackSelect + "where track.kit_id = $1;"
 	rows, err := d.db.Query(q, kit_id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	return d._extractTracks(rows)
+	return d.extractTracks(rows)
 }
 
-func (d *DB) getAllTracks() ([]Track, error) {
+func (d *DB) GetAllTracks() ([]Track, error) {
 	q := trackSelect + ";"
 
 	rows, err := d.db.Query(q)
@@ -183,10 +183,10 @@ func (d *DB) getAllTracks() ([]Track, error) {
 		return nil, err
 	}
 	defer rows.Close()
-	return d._extractTracks(rows)
+	return d.extractTracks(rows)
 }
 
-func (d *DB) _extractTracks(rows *sql.Rows) ([]Track, error) {
+func (d *DB) extractTracks(rows *sql.Rows) ([]Track, error) {
 	tracks := []Track{}
 	for rows.Next() {
 		var (
@@ -228,7 +228,7 @@ func (d *DB) _extractTracks(rows *sql.Rows) ([]Track, error) {
 	return tracks, nil
 }
 
-func (d *DB) getAllVoxes() ([]Vox, error) {
+func (d *DB) GetAllVoxes() ([]Vox, error) {
 	q := `
 select
 	id, name
@@ -254,7 +254,7 @@ from vox;`
 	return voxes, nil
 }
 
-func (d *DB) getAllEras() ([]Era, error) {
+func (d *DB) GetAllEras() ([]Era, error) {
 	q := `
 select
 	id, name
@@ -280,7 +280,7 @@ from era;`
 	return eras, nil
 }
 
-func (d *DB) getAllGenres() ([]Genre, error) {
+func (d *DB) GetAllGenres() ([]Genre, error) {
 	q := `
 select
 	id, name
@@ -306,7 +306,7 @@ from genre;`
 	return genres, nil
 }
 
-func (d *DB) getAllKits() ([]Kit, error) {
+func (d *DB) GetAllKits() ([]Kit, error) {
 	q := `
 select
 	id, name
@@ -332,7 +332,7 @@ from kit;`
 	return kits, nil
 }
 
-func (d *DB) getTrack(id int64) (Track, error) {
+func (d *DB) GetTrack(id int64) (Track, error) {
 	/*
 			q := `
 		select
@@ -414,7 +414,7 @@ where track.id = $1;
 	return t, nil
 }
 
-func (d *DB) updateTrack(track Track) error {
+func (d *DB) UpdateTrack(track Track) error {
 	q := `
 update track
 set
@@ -425,7 +425,7 @@ where id=$9`
 	return err
 }
 
-func (d *DB) updateLyrics(lyrics Lyrics) error {
+func (d *DB) UpdateLyrics(lyrics Lyrics) error {
 	q := `
 update lyrics
 set
@@ -435,7 +435,7 @@ where id=$2;`
 	return err
 }
 
-func (d *DB) addLyrics(track_id int64, lyrics Lyrics) (int64, error) {
+func (d *DB) AddLyrics(track_id int64, lyrics Lyrics) (int64, error) {
 	q := `insert into lyrics (text) values ($1)`
 	res, err := d.db.Exec(q, lyrics.RawText)
 	if err != nil {
@@ -454,7 +454,7 @@ func (d *DB) addLyrics(track_id int64, lyrics Lyrics) (int64, error) {
 	return id, nil
 }
 
-func (d *DB) getEra(id int64) (Era, error) {
+func (d *DB) GetEra(id int64) (Era, error) {
 	q := `select name from era where id=$1`
 	row := d.db.QueryRow(q, id)
 	var name string
@@ -466,11 +466,11 @@ func (d *DB) getEra(id int64) (Era, error) {
 	return e, err
 }
 
-func (d *DB) addEra(name string) (int64, error) {
-	return d._insertName("era", name)
+func (d *DB) AddEra(name string) (int64, error) {
+	return d.insertName("era", name)
 }
 
-func (d *DB) getGenre(id int64) (Genre, error) {
+func (d *DB) GetGenre(id int64) (Genre, error) {
 	q := `select name from genre where id=$1`
 	row := d.db.QueryRow(q, id)
 	var name string
@@ -482,11 +482,11 @@ func (d *DB) getGenre(id int64) (Genre, error) {
 	return g, err
 }
 
-func (d *DB) addGenre(name string) (int64, error) {
-	return d._insertName("genre", name)
+func (d *DB) AddGenre(name string) (int64, error) {
+	return d.insertName("genre", name)
 }
 
-func (d *DB) getVox(id int64) (Vox, error) {
+func (d *DB) GetVox(id int64) (Vox, error) {
 	q := `select name from vox where id=$1`
 	row := d.db.QueryRow(q, id)
 	var name string
@@ -498,11 +498,11 @@ func (d *DB) getVox(id int64) (Vox, error) {
 	return v, err
 }
 
-func (d *DB) addVox(name string) (int64, error) {
-	return d._insertName("vox", name)
+func (d *DB) AddVox(name string) (int64, error) {
+	return d.insertName("vox", name)
 }
 
-func (d *DB) getKit(id int64) (Kit, error) {
+func (d *DB) GetKit(id int64) (Kit, error) {
 	q := `select name from kit where id=$1`
 	row := d.db.QueryRow(q, id)
 	var name string
@@ -513,11 +513,11 @@ func (d *DB) getKit(id int64) (Kit, error) {
 	k := Kit{Id: id, Name: name}
 	return k, err
 }
-func (d *DB) addKit(name string) (int64, error) {
-	return d._insertName("kit", name)
+func (d *DB) AddKit(name string) (int64, error) {
+	return d.insertName("kit", name)
 }
 
-func (d *DB) getAllSetlists() ([]Setlist, error) {
+func (d *DB) GetAllSetlists() ([]Setlist, error) {
 	q := `
 select 
 	setlist.id, setlist.name, setlist.timestamp, 
@@ -531,10 +531,10 @@ left join
 		return nil, err
 	}
 
-	return d._extractSetlists(rows)
+	return d.extractSetlists(rows)
 }
 
-func (d *DB) getSetlist(id int64) (Setlist, error) {
+func (d *DB) GetSetlist(id int64) (Setlist, error) {
 	q := `
 SELECT 
 	setlist.name, setlist.timestamp, a_set.id 
@@ -558,7 +558,7 @@ WHERE
 		if err != nil {
 			return Setlist{}, err
 		}
-		s, err := d.getSet(set_id)
+		s, err := d.GetSet(set_id)
 		if err != nil {
 			return Setlist{}, err
 		}
@@ -569,7 +569,7 @@ WHERE
 	return sl, nil
 }
 
-func (d *DB) _extractSetlists(rows *sql.Rows) ([]Setlist, error) {
+func (d *DB) extractSetlists(rows *sql.Rows) ([]Setlist, error) {
 	setlists := []Setlist{}
 	last_id := int64(0)
 	var cur_setlist *Setlist
@@ -613,7 +613,7 @@ func (d *DB) _extractSetlists(rows *sql.Rows) ([]Setlist, error) {
 
 }
 
-func (d *DB) getSet(id int64) (Set, error) {
+func (d *DB) GetSet(id int64) (Set, error) {
 	// DEB: fmt.Println("getSet ", id)
 	q := `
 SELECT a_set.name, a_set.setlist_id, a_set.setnum,
@@ -734,7 +734,7 @@ ORDER BY sets_tracks.seq ASC;
 	return s, nil
 }
 
-func (d *DB) addSet(s Set) (int64, error) {
+func (d *DB) AddSet(s Set) (int64, error) {
 	// DEB: fmt.Println("Adding set:", s.Name)
 	q := "insert into a_set (setlist_id, name, setnum) values ($1, $2, $3);"
 	res, err := d.db.Exec(q, s.SetlistId, s.Name, s.SetNum)
@@ -748,14 +748,14 @@ func (d *DB) addSet(s Set) (int64, error) {
 	return id, nil
 }
 
-func (d *DB) updateSet(s Set) error {
+func (d *DB) UpdateSet(s Set) error {
 	// DEB: fmt.Println("Updating set:", s.Name)
 	q := "update a_set set name=$1 where id=$2"
 	_, err := d.db.Exec(q, s.Name, s.Id)
 	return err
 }
 
-func (d *DB) addTrackToSet(sid int64, tid int64) error {
+func (d *DB) AddTrackToSet(sid int64, tid int64) error {
 	// DEB: fmt.Printf("Adding track %d to set %d\n", tid, sid)
 	q := "select max(seq) from sets_tracks where set_id=$1;"
 	var seq_null sql.NullInt64
@@ -777,7 +777,7 @@ func (d *DB) addTrackToSet(sid int64, tid int64) error {
 	return nil
 }
 
-func (d *DB) remTrackFromSet(sid int64, tid int64) error {
+func (d *DB) RemTrackFromSet(sid int64, tid int64) error {
 	// DEB: fmt.Printf("Removing track %d from set %d\n", sid, tid)
 	q := "delete from sets_tracks where set_id = $1 and track_id =$2"
 	_, err := d.db.Exec(q, sid, tid)
@@ -787,14 +787,14 @@ func (d *DB) remTrackFromSet(sid int64, tid int64) error {
 	return nil
 }
 
-func (d *DB) updateSetlist(s Setlist) error {
+func (d *DB) UpdateSetlist(s Setlist) error {
 	// DEB: fmt.Println("updating setlist:", s.Name)
 	q := "update setlist set name=$1 where id=$2;"
 	_, err := d.db.Exec(q, s.Name, s.Id)
 	return err
 }
 
-func (d *DB) addSetlist(s Setlist) (int64, error) {
+func (d *DB) AddSetlist(s Setlist) (int64, error) {
 	// DEB: fmt.Println("Adding set:", s.Name)
 	tstamp := time.Now().Unix()
 	q := "insert into setlist (name, timestamp) values ($1, $2);"
@@ -809,7 +809,7 @@ func (d *DB) addSetlist(s Setlist) (int64, error) {
 	return id, nil
 }
 
-func (d *DB) _insertName(table string, name string) (int64, error) {
+func (d *DB) insertName(table string, name string) (int64, error) {
 	q := fmt.Sprintf("insert into %s (name) values ('%s');", table, name)
 	res, err := d.db.Exec(q)
 	if err != nil {
@@ -823,30 +823,30 @@ func (d *DB) _insertName(table string, name string) (int64, error) {
 	return id, nil
 }
 
-func (d *DB) addSong(title string, vox string, tempo int, kit string, click bool,
+func (d *DB) AddSong(title string, vox string, tempo int, kit string, click bool,
 	era string, genre string) (int64, error) {
 
 	// DEB: fmt.Println("Adding song:", title)
 
-	vox_id, err := d.getVoxByName(vox)
+	vox_id, err := d.GetVoxByName(vox)
 	if err != nil {
 		return -1, err
 	}
 	// DEB: fmt.Println("vox_id ", vox_id)
 
-	era_id, err := d.getEraByName(era)
+	era_id, err := d.GetEraByName(era)
 	if err != nil {
 		return -1, err
 	}
 	// DEB: fmt.Println("era_id ", era_id)
 
-	genre_id, err := d.getGenreByName(genre)
+	genre_id, err := d.GetGenreByName(genre)
 	if err != nil {
 		return -1, err
 	}
 	// DEB: fmt.Println("genre_id ", genre_id)
 
-	kit_id, err := d.getKitByName(kit)
+	kit_id, err := d.GetKitByName(kit)
 	if err != nil {
 		return -1, err
 	}

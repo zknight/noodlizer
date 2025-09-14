@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
+
+	"github.com/zknight/noodlizer/db"
 )
 
 func main() {
@@ -41,12 +43,12 @@ func main() {
 func serve() {
 	//http.HandleFunc("/{$}", Index)
 	// open DB
-	db, err := open_db("tracks.db")
+	tdb, err := db.OpenDB("tracks.db")
 	if err != nil {
 		fmt.Println("Error opening track database: ", err.Error())
 		os.Exit(1)
 	}
-	_ = NewView(db)
+	_ = NewView(tdb)
 	svr := http.Server{Addr: ":80"}
 	done := make(chan struct{})
 	go func() {
@@ -114,10 +116,10 @@ func flimport(infile, dbfile string) {
 	genre_set := set(make(set))
 	kit_set := set(make(set))
 
-	songs := []Track{}
+	songs := []db.Track{}
 
 	for _, row := range contents {
-		track := Track{}
+		track := db.Track{}
 		for i, v := range row {
 			//fmt.Printf("%s:%s ", keys[i], v)
 			//switch keys[i] {
@@ -157,20 +159,20 @@ func flimport(infile, dbfile string) {
 		fmt.Println()
 	}
 
-	var db *DB
+	var tdb *db.DB
 
 	// check for exist
 	_, err = os.Stat(dbfile)
 	if os.IsNotExist(err) {
 		fmt.Println("Creating new...")
-		db, err = new_db(dbfile)
+		tdb, err = db.NewDB(dbfile)
 	} else {
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
 		}
 		fmt.Println("Opening...")
-		db, err = open_db(dbfile)
+		tdb, err = db.OpenDB(dbfile)
 	}
 	if err != nil {
 		fmt.Println("failed to open database.", err.Error())
@@ -179,24 +181,24 @@ func flimport(infile, dbfile string) {
 
 	// iterate setssss
 	for k := range vox_set {
-		db.addVox(k)
+		tdb.AddVox(k)
 	}
 
 	for k := range era_set {
-		db.addEra(k)
+		tdb.AddEra(k)
 	}
 
 	for k := range genre_set {
-		db.addGenre(k)
+		tdb.AddGenre(k)
 	}
 
 	for k := range kit_set {
-		db.addKit(k)
+		tdb.AddKit(k)
 	}
 
 	// loopty thru the songs
 	for _, s := range songs {
-		songid, err := db.addSong(s.Title, s.Vox.Name, s.Tempo, s.Kit.Name, s.Click, s.Era.Name, s.Genre.Name)
+		songid, err := db.AddSong(s.Title, s.Vox.Name, s.Tempo, s.Kit.Name, s.Click, s.Era.Name, s.Genre.Name)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
