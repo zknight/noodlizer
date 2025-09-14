@@ -8,7 +8,7 @@ import (
 	"math/big"
 )
 
-func (d *DB) newGig(sl Setlist) (*Gig, error) {
+func (d *DB) NewGig(sl Setlist) (*Gig, error) {
 	// generate key (rando)
 	id, err := rand.Int(rand.Reader, big.NewInt(0x7FFFFFFF))
 	if err != nil {
@@ -32,7 +32,7 @@ func (d *DB) newGig(sl Setlist) (*Gig, error) {
 	return g, err
 }
 
-func (d *DB) getGig(id int64) (*Gig, error) {
+func (d *DB) GetGig(id int64) (*Gig, error) {
 	fmt.Println("getGig: ", id)
 	q := "select obj from gig where id=$1;"
 	var (
@@ -53,7 +53,7 @@ func (d *DB) getGig(id int64) (*Gig, error) {
 	return &g, err
 }
 
-func (d *DB) updateGig(g *Gig) error {
+func (d *DB) UpdateGig(g *Gig) error {
 	var buf bytes.Buffer
 	fmt.Printf("updateGig:%s id %d set %d track %d\n", g.Name, g.Id, g.CurSet, g.CurTrack)
 	gob_g := gob.NewEncoder(&buf)
@@ -73,7 +73,7 @@ func (d *DB) updateGig(g *Gig) error {
 	return err
 }
 
-func (d *DB) removeGig(id int64) error {
+func (d *DB) RemoveGig(id int64) error {
 	fmt.Println("removing gig ", id)
 	q := "delete from gig where id=$1;"
 	res, err := d.db.Exec(q, id)
@@ -85,7 +85,7 @@ func (d *DB) removeGig(id int64) error {
 	return err
 }
 
-func (d *DB) cleanupGigs() error {
+func (d *DB) CleanupGigs() error {
 	q := "delete from gig where 1"
 	res, err := d.db.Exec(q)
 	nr, rerr := res.RowsAffected()

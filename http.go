@@ -9,7 +9,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/zknight/noodlizer/db"
+	"noodlizer/db"
 )
 
 type View struct {
@@ -493,7 +493,7 @@ func (v *View) UpdateLyrics(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("lyrics_id from form:", lyrics_id)
-	lyrics := db.bLyrics{Id: int64(lyrics_id), RawText: r.PostFormValue("lyrics")}
+	lyrics := db.Lyrics{Id: int64(lyrics_id), RawText: r.PostFormValue("lyrics")}
 	if lyrics.Id == 0 {
 		_, err = v.db.AddLyrics(id, lyrics)
 		if err != nil {
@@ -715,7 +715,7 @@ func (v *View) DoGig(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, fmt.Sprintf("DoGig.2: %s", err.Error()))
 		return
 	}
-	gig, err := v.db.newGig(sl)
+	gig, err := v.db.NewGig(sl)
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("DoGig.3: %s", err.Error()))
 		return
@@ -758,7 +758,7 @@ func (v *View) ShowGigNext(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, fmt.Sprintf("ShowGigNext.1: %s", err.Error()))
 		return
 	}
-	g, err := v.db.getGig(int64(id))
+	g, err := v.db.GetGig(int64(id))
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("ShowGigNext.2: %s", err.Error()))
 		return
@@ -809,7 +809,7 @@ func (v *View) ShowGigNext(w http.ResponseWriter, r *http.Request) {
 			return
 		} else {
 			g.CurTrack = -1 // next time through here it will get set incremented to the first track
-			err = v.db.updateGig(g)
+			err = v.db.UpdateGig(g)
 			if err != nil {
 				io.WriteString(w, fmt.Sprintf("ShowGigNext.8: %s", err.Error()))
 			}
@@ -822,7 +822,7 @@ func (v *View) ShowGigNext(w http.ResponseWriter, r *http.Request) {
 	}
 	//fmt.Println("Next Track in set: ", g.CurTrack)
 	//fmt.Println("Next Set in Gig: ", g.CurSet)
-	err = v.db.updateGig(g)
+	err = v.db.UpdateGig(g)
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("ShowGigNext.3: %s", err.Error()))
 		return
@@ -866,7 +866,7 @@ func (v *View) ShowGigPrev(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, fmt.Sprintf("ShowGigPrev.1: %s", err.Error()))
 		return
 	}
-	g, err := v.db.getGig(int64(id))
+	g, err := v.db.GetGig(int64(id))
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("ShowGigPrev.2: %s", err.Error()))
 		return
@@ -912,7 +912,7 @@ func (v *View) ShowGigPrev(w http.ResponseWriter, r *http.Request) {
 		} else {
 			// should get subtracked next time through
 			g.CurTrack = len(g.Sets[g.CurSet].Tracks)
-			err = v.db.updateGig(g)
+			err = v.db.UpdateGig(g)
 			if err != nil {
 				io.WriteString(w, fmt.Sprintf("ShowGigNext.5: %s", err.Error()))
 			}
@@ -925,7 +925,7 @@ func (v *View) ShowGigPrev(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("Next Track in set: ", g.CurTrack)
 	fmt.Println("Next Set in Gig: ", g.CurSet)
-	err = v.db.updateGig(g)
+	err = v.db.UpdateGig(g)
 	if err != nil {
 		io.WriteString(w, fmt.Sprintf("ShowGigNext.3: %s", err.Error()))
 		return
@@ -969,7 +969,7 @@ func (v *View) EndGig(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, fmt.Sprintf("EndGig.1: %s", err.Error()))
 		return
 	}
-	v.db.removeGig(int64(id))
+	v.db.RemoveGig(int64(id))
 	url := "/"
 	http.Redirect(w, r, url, http.StatusFound)
 }

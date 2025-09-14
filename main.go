@@ -11,7 +11,7 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/zknight/noodlizer/db"
+	"noodlizer/db"
 )
 
 func main() {
@@ -67,7 +67,7 @@ func serve() {
 	}
 	// clean up the gigs...
 	fmt.Printf("Cleaning up...")
-	err = db.cleanupGigs()
+	err = tdb.CleanupGigs()
 	if err != nil {
 		fmt.Println("Error cleaning up: ", err.Error())
 	}
@@ -198,7 +198,7 @@ func flimport(infile, dbfile string) {
 
 	// loopty thru the songs
 	for _, s := range songs {
-		songid, err := db.AddSong(s.Title, s.Vox.Name, s.Tempo, s.Kit.Name, s.Click, s.Era.Name, s.Genre.Name)
+		songid, err := tdb.AddSong(s.Title, s.Vox.Name, s.Tempo, s.Kit.Name, s.Click, s.Era.Name, s.Genre.Name)
 		if err != nil {
 			fmt.Println(err.Error())
 			os.Exit(1)
