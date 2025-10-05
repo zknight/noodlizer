@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
@@ -31,8 +32,8 @@ func main() {
 		outpath := os.Args[3]
 		flimport(inpath, outpath)
 	case "serve":
-		// no params for now
-		serve()
+		data_path := os.Args[2]
+		serve(data_path)
 	default:
 		fmt.Printf("Sorry. Dunno what you mean, \"%s\"....?\n", os.Args[1])
 		os.Exit(2)
@@ -40,15 +41,17 @@ func main() {
 
 }
 
-func serve() {
+func serve(data_path string) {
 	//http.HandleFunc("/{$}", Index)
 	// open DB
-	tdb, err := db.OpenDB("tracks.db")
+	//tdb, err := db.OpenDB("tracks.db")
+	dbp := filepath.Join(data_path, "tracks.db")
+	tdb, err := db.OpenDB(dbp)
 	if err != nil {
 		fmt.Println("Error opening track database: ", err.Error())
 		os.Exit(1)
 	}
-	_ = NewView(tdb)
+	_ = NewView(tdb, data_path)
 	svr := http.Server{Addr: ":8080"}
 	done := make(chan struct{})
 	go func() {

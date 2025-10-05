@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"io"
 	"net/http"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"sync"
@@ -28,14 +29,17 @@ type trackInfo struct {
 	Kits   []db.Kit
 }
 
-func NewView(db *db.DB) *View {
+func NewView(db *db.DB, tpath string) *View {
 	v := &View{
 		db:      db,
 		subs:    make(map[*subscriber]struct{}),
 		waiters: make(map[string]struct{}),
 	}
+
 	// static path
-	fs := http.FileServer(http.Dir("./static/"))
+	sp := filepath.Join(tpath, "static/")
+	//fs := http.FileServer(http.Dir("./static/"))
+	fs := http.FileServer(http.Dir(sp))
 
 	// handler funcs
 	http.HandleFunc("/{$}", v.Index)
@@ -81,7 +85,9 @@ func NewView(db *db.DB) *View {
 		"inc": func(i int) int {
 			return i + 1
 		}}
-	v.index = template.Must(template.New("main").Funcs(fmap).ParseGlob("./template/*.tmpl"))
+	tp := filepath.Join(tpath, "template/*.tmpl")
+	//v.index = template.Must(template.New("main").Funcs(fmap).ParseGlob("./template/*.tmpl"))
+	v.index = template.Must(template.New("main").Funcs(fmap).ParseGlob(tp))
 
 	go v.servicePause()
 	return v
