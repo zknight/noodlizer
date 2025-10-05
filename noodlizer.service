@@ -2,7 +2,7 @@
 #
 
 [Unit]
-Description=Noodlizer
+Description=noodlizer
 #Documentation=https://caddyserver.com/docs/
 After=network.target network-online.target
 Requires=network-online.target
@@ -11,7 +11,7 @@ Requires=network-online.target
 Type=simple
 User=zayne
 Group=zayne
-ExecStart=/usr/local/sbin/noodlizer
+ExecStart=/usr/local/sbin/noodlizer serve /usr/local/etc
 #ExecReload=/usr/bin/caddy reload --config /etc/caddy/Caddyfile --force
 #TimeoutStopSec=5s
 #LimitNOFILE=1048576
