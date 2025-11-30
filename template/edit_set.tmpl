@@ -31,15 +31,26 @@
                     {{ $sid := .Set.Id }}
                     <div class="songlist"><!--h2>Songs in Set</h2-->
                         {{ $i := 1 }}
+                        {{ $j := len .Set.Tracks }}
                         <table class="padded">
-                            <tr><th colspan=5>Songs in Set</th></tr>
+                            <tr><th colspan=7>{{ $j }} Songs in Set</th></tr>
                         {{ range .Set.Tracks }}
                             <tr>
                                 <td>#{{$i}}:</td>
                                 <td>{{ .ProperTitle }}</td>
                                 <td>{{ .Vox.ProperName }}</td>
                                 <td>{{ .Era.ProperName }} {{ .Genre.ProperName }}</td>
-                                <td><a href="/set/{{$sid}}/del_track/{{.Id}}">Remove</a></td>
+                                <td>
+                                    {{ if gt $i 1 }}
+                                        <a href="/set/{{$sid}}/track_up/{{.Id}}">🔼</a>
+                                    {{ end }}
+                                </td>
+                                <td>
+                                    {{ if lt $i $j }}
+                                        <a href="/set/{{$sid}}/track_dn/{{.Id}}">🔽</a>
+                                    {{ end }}
+                                </td>
+                                <td><a href="/set/{{$sid}}/del_track/{{.Id}}">❎</a></td>
                             </tr>
                             {{ $i = inc $i }}
                         {{ end }}
@@ -50,10 +61,11 @@
                             <tr><th colspan=4>Available Songs</th></tr>
                         {{ range .Tracks }}
                             <tr>
+                                <!--td><a href="/set/{{$sid}}/add_track/{{.Id}}">⬅</a></td-->
+                                <td><a href="/set/{{$sid}}/add_track/{{.Id}}"><img src="/static/add.png"/></a></td>
                                 <td>{{ .ProperTitle }}</td>
                                 <td>{{ .Vox.ProperName }}</td>
                                 <td>{{ .Era.ProperName }} {{ .Genre.ProperName }}</td>
-                                <td><a href="/set/{{$sid}}/add_track/{{.Id}}">Add</a></td>
                             </tr>
                         {{ end }}
                         </table>

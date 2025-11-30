@@ -9,6 +9,7 @@
         {{ template "head" . }}
         <div id="main">
             <div id="content">
+                <div class="submenu"><a href="/track/new">Add New Song</a></div>
                 <table id='tracks'>
                     <tr>
                         <th><a href="#">Title</a></th>
@@ -23,16 +24,21 @@
                     </tr>
                     {{ range .Tracks }}
                     <tr>
-                        <td><a href="/track/{{.Id}}">{{.ProperTitle}}</a></td>
-                        <td>{{.Tempo}}</td>
-                        <td><a href="/vox/{{.Vox.Id}}">{{.Vox.ProperName}}</a></td>
-                        <td><a href="/era/{{.Era.Id}}">{{.Era.ProperName}}</a></td>
-                        <td><a href="/genre/{{.Genre.Id}}">{{.Genre.ProperName}}</a></td>
-                        <td>{{if ne .KeyTone ""}}{{ .KeyTone }}{{else}}None{{end}}</td>
-                        <td><a href="/kit/{{.Kit.Id}}">{{.Kit.ProperName}}</a></td>
-                        <td>{{if .Click}}yes{{else}}no{{end}}</a></td>
-                        <td><a href="/track/{{.Id}}/edit">edit</a></td>
-                        <td><a href="/track/{{.Id}}/del">delete</a></td>
+                        <td>
+                            <a href="/track/{{.Id}}">{{.ProperTitle}}</a>
+                            {{ if eq .Lyrics.Id -1 }}
+                            <span class="tag">NO LYRICS</span>
+                            {{ end }}
+                        </td>
+                        <td class="center">{{.Tempo}}</td>
+                        <td class="center"><a href="/vox/{{.Vox.Id}}">{{.Vox.ProperName}}</a></td>
+                        <td class="center"><a href="/era/{{.Era.Id}}">{{.Era.ProperName}}</a></td>
+                        <td class="center"><a href="/genre/{{.Genre.Id}}">{{.Genre.ProperName}}</a></td>
+                        <td class="center">{{if ne .KeyTone ""}}{{ .KeyTone }}{{else}}None{{end}}</td>
+                        <td class="center"><a href="/kit/{{.Kit.Id}}">{{.Kit.ProperName}}</a></td>
+                        <td class="center">{{if .Click}}yes{{else}}no{{end}}</a></td>
+                        <td class="center"><a href="/track/{{.Id}}/edit">edit</a></td>
+                        <td class="center"><a href="/track/{{.Id}}/del">delete</a></td>
                     </tr>
                     {{ end }} <!-- range -->
                 </table>

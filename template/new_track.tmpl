@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>New Song</title>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+    </head>
+    <body>
+        {{ template "head" .}}
+        <div id="main">
+            <p>Creating a new Song.</p>
+            {{ template "track_form" .}}
+        </div>
+        <div id="footer"></div>
+    </body>
+</html>

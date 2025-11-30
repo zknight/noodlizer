@@ -2,6 +2,7 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -127,7 +128,7 @@ func (d *DB) GetKitByName(name string) (int64, error) {
 
 var trackSelect string = `
 select 
-	track.id, track.title, track.tempo, track.click, track.key_tone, vox.id, vox.name, era.id, era.name, genre.id, genre.name, kit.id, kit.name 
+	track.id, track.title, track.tempo, track.click, track.key_tone, track.lyrics_id, vox.id, vox.name, era.id, era.name, genre.id, genre.name, kit.id, kit.name 
 from track 
 	join vox on track.vox_id = vox.id
 	join era on track.era_id = era.id
@@ -136,7 +137,7 @@ from track
 `
 
 func (d *DB) GetTracksByVox(vox_id int64) ([]Track, error) {
-	q := trackSelect + "where track.vox_id = $1;"
+	q := trackSelect + "where track.vox_id = $1 order by track.title asc;"
 	rows, err := d.db.Query(q, vox_id)
 	if err != nil {
 		return nil, err
@@ -146,7 +147,7 @@ func (d *DB) GetTracksByVox(vox_id int64) ([]Track, error) {
 }
 
 func (d *DB) GetTracksByEra(era_id int64) ([]Track, error) {
-	q := trackSelect + "where track.era_id = $1;"
+	q := trackSelect + "where track.era_id = $1 order by track.title asc;"
 	rows, err := d.db.Query(q, era_id)
 	if err != nil {
 		return nil, err
@@ -156,7 +157,7 @@ func (d *DB) GetTracksByEra(era_id int64) ([]Track, error) {
 }
 
 func (d *DB) GetTracksByGenre(genre_id int64) ([]Track, error) {
-	q := trackSelect + "where track.genre_id = $1;"
+	q := trackSelect + "where track.genre_id = $1 order by track.title asc;"
 	rows, err := d.db.Query(q, genre_id)
 	if err != nil {
 		return nil, err
@@ -166,7 +167,7 @@ func (d *DB) GetTracksByGenre(genre_id int64) ([]Track, error) {
 }
 
 func (d *DB) GetTracksByKit(kit_id int64) ([]Track, error) {
-	q := trackSelect + "where track.kit_id = $1;"
+	q := trackSelect + "where track.kit_id = $1 order by track.title asc;"
 	rows, err := d.db.Query(q, kit_id)
 	if err != nil {
 		return nil, err
@@ -176,7 +177,7 @@ func (d *DB) GetTracksByKit(kit_id int64) ([]Track, error) {
 }
 
 func (d *DB) GetAllTracks() ([]Track, error) {
-	q := trackSelect + ";"
+	q := trackSelect + "order by track.title asc;"
 
 	rows, err := d.db.Query(q)
 	if err != nil {
@@ -190,24 +191,31 @@ func (d *DB) extractTracks(rows *sql.Rows) ([]Track, error) {
 	tracks := []Track{}
 	for rows.Next() {
 		var (
-			id       int64
-			title    string
-			tempo    int64
-			click    int64
-			key_tone string
-			vox_id   int64
-			vox      string
-			era_id   int64
-			era      string
-			genre_id int64
-			genre    string
-			kit_id   int64
-			kit      string
+			id             int64
+			title          string
+			tempo          int64
+			click          int64
+			key_tone       string
+			vox_id         int64
+			vox            string
+			era_id         int64
+			era            string
+			genre_id       int64
+			genre          string
+			kit_id         int64
+			kit            string
+			lyrics_id_null sql.NullInt64
+			lyrics_id      int64
 		)
-		err := rows.Scan(&id, &title, &tempo, &click, &key_tone, &vox_id, &vox, &era_id, &era, &genre_id, &genre, &kit_id, &kit)
+		err := rows.Scan(&id, &title, &tempo, &click, &key_tone, &lyrics_id_null, &vox_id, &vox, &era_id, &era, &genre_id, &genre, &kit_id, &kit)
 		if err != nil {
 			return nil, err
 		}
+		lyrics_id = -1
+		if lyrics_id_null.Valid {
+			lyrics_id = lyrics_id_null.Int64
+		}
+		lyrObj := Lyrics{Id: lyrics_id}
 		voxObj := Vox{Id: vox_id, Name: vox}
 		eraObj := Era{Id: era_id, Name: era}
 		genreObj := Genre{Id: genre_id, Name: genre}
@@ -222,6 +230,7 @@ func (d *DB) extractTracks(rows *sql.Rows) ([]Track, error) {
 			Era:     eraObj,
 			Genre:   genreObj, //fmt.Sprintf("genre %d", genre_id),
 			Kit:     kitObj,   //fmt.Sprintf("kit %d", kit_id),
+			Lyrics:  lyrObj,
 		}
 		tracks = append(tracks, track)
 	}
@@ -425,6 +434,29 @@ where id=$9`
 	return err
 }
 
+func (d *DB) AddTrack(track Track) error {
+	q := `
+insert into track
+	(title, tempo, click, key_tone, vox_id, era_id, genre_id, kit_id)
+	values
+	($1, $2, $3, $4, $5, $6, $7, $8)`
+	_, err := d.db.Exec(q, track.Title, track.Tempo, track.Click, track.KeyTone, track.Vox.Id,
+		track.Era.Id, track.Genre.Id, track.Kit.Id)
+	return err
+}
+
+func (d *DB) HasLyrics(tid int64) bool {
+	q := `select count(*) from track where track.id = $1 and track.lyrics_id NOT NULL;`
+	row := d.db.QueryRow(q, tid)
+	l := 0
+	err := row.Scan(&l)
+	if err != nil {
+		fmt.Println("HasLyrics barf: ", err.Error())
+		return false
+	}
+	return l != 0
+}
+
 func (d *DB) UpdateLyrics(lyrics Lyrics) error {
 	q := `
 update lyrics
@@ -539,7 +571,7 @@ func (d *DB) GetSetlist(id int64) (Setlist, error) {
 SELECT 
 	setlist.name, setlist.timestamp, a_set.id 
 FROM setlist
-JOIN
+LEFT JOIN
 	a_set on a_set.setlist_id = setlist.id
 WHERE
 	setlist.id = $1;`
@@ -548,21 +580,23 @@ WHERE
 		return Setlist{}, err
 	}
 	var (
-		name      string
-		timestamp int64
-		set_id    int64
+		name        string
+		timestamp   int64
+		set_id_null sql.NullInt64
 	)
 	sets := []Set{}
 	for rows.Next() {
-		err = rows.Scan(&name, &timestamp, &set_id)
+		err = rows.Scan(&name, &timestamp, &set_id_null)
 		if err != nil {
 			return Setlist{}, err
 		}
-		s, err := d.GetSet(set_id)
-		if err != nil {
-			return Setlist{}, err
+		if set_id_null.Valid {
+			s, err := d.GetSet(set_id_null.Int64)
+			if err != nil {
+				return Setlist{}, err
+			}
+			sets = append(sets, s)
 		}
-		sets = append(sets, s)
 	}
 	sl := Setlist{Id: id, Name: name, Timestamp: timestamp, Sets: sets}
 
@@ -766,7 +800,7 @@ func (d *DB) AddTrackToSet(sid int64, tid int64) error {
 	seq := 0
 	if seq_null.Valid {
 		// DEB: fmt.Println(" seq:", seq_null.Int64)
-		seq = int(seq_null.Int64)
+		seq = int(seq_null.Int64) + 1
 	}
 
 	q = "insert into sets_tracks (set_id, track_id, seq) values ($1, $2, $3)"
@@ -784,6 +818,71 @@ func (d *DB) RemTrackFromSet(sid int64, tid int64) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (d *DB) MoveTrackUpInSet(sid int64, tid int64) error {
+	q := "select seq from sets_tracks where set_id = $1 and track_id = $2;"
+	var seq_null sql.NullInt64
+	err := d.db.QueryRow(q, sid, tid).Scan(&seq_null)
+	fmt.Println("q1")
+	if err != nil {
+		return err
+	}
+	seq := -1
+	if seq_null.Valid {
+		seq = int(seq_null.Int64)
+	} else {
+		return errors.New("invalid seq number")
+	}
+
+	q = "update sets_tracks set seq=$1 where set_id = $2 and seq=$3;"
+	fmt.Println("q2")
+	_, err = d.db.Exec(q, seq, sid, seq-1)
+	if err != nil {
+		return err
+	}
+
+	q = "update sets_tracks set seq=$1 where set_id = $2 and track_id = $3;"
+	fmt.Println("q3")
+	_, err = d.db.Exec(q, seq-1, sid, tid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *DB) MoveTrackDownInSet(sid int64, tid int64) error {
+
+	q := "select seq from sets_tracks where set_id = $1 and track_id = $2;"
+	var seq_null sql.NullInt64
+	err := d.db.QueryRow(q, sid, tid).Scan(&seq_null)
+	fmt.Println("q1")
+	if err != nil {
+		return err
+	}
+	seq := -1
+	if seq_null.Valid {
+		seq = int(seq_null.Int64)
+	} else {
+		return errors.New("invalid seq number")
+	}
+
+	q = "update sets_tracks set seq=$1 where set_id = $2 and seq=$3;"
+	fmt.Println("q2")
+	_, err = d.db.Exec(q, seq, sid, seq+1)
+	if err != nil {
+		return err
+	}
+
+	q = "update sets_tracks set seq=$1 where set_id = $2 and track_id = $3;"
+	fmt.Println("q3")
+	_, err = d.db.Exec(q, seq+1, sid, tid)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

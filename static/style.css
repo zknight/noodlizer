@@ -270,3 +270,9 @@ td.note {
     background-color:#335;
     margin: 2px;
 }
+.tag {
+    font-weight: bold;
+    font-size: 8px;
+    background-color:#335;
+    margin: 2px;
+}

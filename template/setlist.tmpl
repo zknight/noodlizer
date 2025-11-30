@@ -24,7 +24,12 @@
                         <td><a href="/set/{{.Id}}">{{ .ProperName }}</a></td>
                         <td>{{ .TrackCount }}</td>
                     </tr>
+                    {{ else }}
+                    <tr>
+                        <td colspan=2>No sets.</td>
+                    </tr>
                     {{ end }}
+                    <tr><td colspan=2><a href="/setlist/{{.Id}}/edit">Add Set</a></td>
                 </table>
             </fieldset>
             </div>

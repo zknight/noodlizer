@@ -27,6 +27,7 @@ type trackInfo struct {
 	Eras   []db.Era
 	Genres []db.Genre
 	Kits   []db.Kit
+	Action string
 }
 
 func NewView(db *db.DB, tpath string) *View {
@@ -58,6 +59,8 @@ func NewView(db *db.DB, tpath string) *View {
 	http.HandleFunc("/set/{id}/edit", v.EditSet)
 	http.HandleFunc("/set/{sid}/add_track/{tid}", v.AddTrackToSet)
 	http.HandleFunc("/set/{sid}/del_track/{tid}", v.DelTrackFromSet)
+	http.HandleFunc("/set/{sid}/track_up/{tid}", v.MoveUpInSet)
+	http.HandleFunc("/set/{sid}/track_dn/{tid}", v.MoveDownInSet)
 	http.HandleFunc("/setlist/{id}", v.ShowSetlist)
 	http.HandleFunc("/setlist/create", v.CreateSetlist)
 	http.HandleFunc("/setlist/{id}/edit", v.EditSetlist)
@@ -66,8 +69,10 @@ func NewView(db *db.DB, tpath string) *View {
 	http.HandleFunc("/setlist/{id}/create_set/{setnum}", v.CreateSet)
 	http.HandleFunc("POST /setlist/{id}/save_set", v.SaveSet)
 	http.HandleFunc("POST /setlist/{id}/update_set", v.UpdateSet)
+	http.HandleFunc("/track/new", v.NewTrack)
 	http.HandleFunc("/track/{id}", v.ShowTrack)
 	http.HandleFunc("/track/{id}/edit", v.EditTrack)
+	http.HandleFunc("POST /track/0/create", v.CreateTrack)
 	http.HandleFunc("POST /track/{id}/update", v.UpdateTrack)
 	http.HandleFunc("POST /track/{id}/update_lyrics", v.UpdateLyrics)
 	http.HandleFunc("/vox/{id}", v.ShowVox)
@@ -266,6 +271,48 @@ func (v *View) DelTrackFromSet(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, http.StatusFound)
 }
 
+func (v *View) MoveUpInSet(w http.ResponseWriter, r *http.Request) {
+	sid, err := strconv.Atoi(r.PathValue(("sid")))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	tid, err := strconv.Atoi(r.PathValue("tid"))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	err = v.db.MoveTrackUpInSet(int64(sid), int64(tid))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	url := fmt.Sprintf("/set/%d/edit", sid)
+	http.Redirect(w, r, url, http.StatusFound)
+
+}
+
+func (v *View) MoveDownInSet(w http.ResponseWriter, r *http.Request) {
+	sid, err := strconv.Atoi(r.PathValue(("sid")))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	tid, err := strconv.Atoi(r.PathValue("tid"))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	err = v.db.MoveTrackDownInSet(int64(sid), int64(tid))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	url := fmt.Sprintf("/set/%d/edit", sid)
+	http.Redirect(w, r, url, http.StatusFound)
+
+}
+
 func (v *View) ShowSetlists(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Show Setlists.")
 	setlists, err := v.db.GetAllSetlists()
@@ -379,6 +426,36 @@ func (v *View) ShowAllTracks(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (v *View) NewTrack(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("New Track.")
+	t := db.Track{Title: "<Change Me>", Tempo: 120}
+	voxes, err := v.db.GetAllVoxes()
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	eras, err := v.db.GetAllEras()
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	genres, err := v.db.GetAllGenres()
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	kits, err := v.db.GetAllKits()
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	err = v.index.ExecuteTemplate(w, "new_track.tmpl",
+		trackInfo{Track: t, Voxes: voxes, Eras: eras, Genres: genres, Kits: kits, Action: "create"})
+	if err != nil {
+		io.WriteString(w, err.Error())
+	}
+}
+
 func (v *View) ShowTrack(w http.ResponseWriter, r *http.Request) {
 	id, serr := strconv.Atoi(r.PathValue("id"))
 	if serr != nil {
@@ -430,11 +507,47 @@ func (v *View) EditTrack(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	err = v.index.ExecuteTemplate(w, "edit_track.tmpl",
-		trackInfo{Track: t, Voxes: voxes, Eras: eras, Genres: genres, Kits: kits})
+		trackInfo{Track: t, Voxes: voxes, Eras: eras, Genres: genres, Kits: kits, Action: "update"})
 
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
+}
+func (v *View) CreateTrack(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+
+	title := strings.ToLower(r.PostForm["Title"][0])
+	click := false
+	c := r.PostForm["Click"]
+	if len(c) > 0 {
+		click = r.PostForm["Click"][0] == "on"
+	}
+	tempo, _ := strconv.Atoi(r.PostForm["Tempo"][0])
+	vox_id, _ := strconv.Atoi(r.PostForm["Vox"][0])
+	era_id, _ := strconv.Atoi(r.PostForm["Era"][0])
+	genre_id, _ := strconv.Atoi(r.PostForm["Genre"][0])
+	kit_id, _ := strconv.Atoi(r.PostForm["Kit"][0])
+	key_tone := r.PostForm["KeyTone"][0]
+
+	t := db.Track{
+		Title:   title,
+		Tempo:   tempo,
+		Click:   click,
+		KeyTone: key_tone,
+		Vox:     db.Vox{Id: int64(vox_id)},
+		Era:     db.Era{Id: int64(era_id)},
+		Genre:   db.Genre{Id: int64(genre_id)},
+		Kit:     db.Kit{Id: int64(kit_id)},
+	}
+	err = v.db.AddTrack(t)
+	if err != nil {
+		io.WriteString(w, err.Error())
+	}
+	http.Redirect(w, r, "/tracks", http.StatusFound)
 }
 
 func (v *View) UpdateTrack(w http.ResponseWriter, r *http.Request) {
@@ -452,7 +565,11 @@ func (v *View) UpdateTrack(w http.ResponseWriter, r *http.Request) {
 	//io.WriteString(w, fmt.Sprintf("%v", r.PostForm))
 
 	title := strings.ToLower(r.PostForm["Title"][0])
-	click := r.PostForm["Click"][0] == "on"
+	click := false
+	c := r.PostForm["Click"]
+	if len(c) > 0 {
+		click = r.PostForm["Click"][0] == "on"
+	}
 	tempo, _ := strconv.Atoi(r.PostForm["Tempo"][0])
 	vox_id, _ := strconv.Atoi(r.PostForm["Vox"][0])
 	era_id, _ := strconv.Atoi(r.PostForm["Era"][0])
