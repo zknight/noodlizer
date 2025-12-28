@@ -136,8 +136,9 @@ from track
 	join kit on track.kit_id = kit.id
 `
 
-func (d *DB) GetTracksByVox(vox_id int64) ([]Track, error) {
-	q := trackSelect + "where track.vox_id = $1 order by track.title asc;"
+func (d *DB) GetTracksByVox(vox_id int64, sort, dir string) ([]Track, error) {
+	//q := trackSelect + "where track.vox_id = $1 order by track.title asc;"
+	q := trackSelect + "where track.vox_id = $1 order by " + sortObj(sort) + " " + dir + ";"
 	rows, err := d.db.Query(q, vox_id)
 	if err != nil {
 		return nil, err
@@ -146,8 +147,8 @@ func (d *DB) GetTracksByVox(vox_id int64) ([]Track, error) {
 	return d.extractTracks(rows)
 }
 
-func (d *DB) GetTracksByEra(era_id int64) ([]Track, error) {
-	q := trackSelect + "where track.era_id = $1 order by track.title asc;"
+func (d *DB) GetTracksByEra(era_id int64, sort, dir string) ([]Track, error) {
+	q := trackSelect + "where track.era_id = $1 order by " + sortObj(sort) + " " + dir + ";"
 	rows, err := d.db.Query(q, era_id)
 	if err != nil {
 		return nil, err
@@ -156,8 +157,8 @@ func (d *DB) GetTracksByEra(era_id int64) ([]Track, error) {
 	return d.extractTracks(rows)
 }
 
-func (d *DB) GetTracksByGenre(genre_id int64) ([]Track, error) {
-	q := trackSelect + "where track.genre_id = $1 order by track.title asc;"
+func (d *DB) GetTracksByGenre(genre_id int64, sort, dir string) ([]Track, error) {
+	q := trackSelect + "where track.genre_id = $1 order by " + sortObj(sort) + " " + dir + ";"
 	rows, err := d.db.Query(q, genre_id)
 	if err != nil {
 		return nil, err
@@ -166,8 +167,8 @@ func (d *DB) GetTracksByGenre(genre_id int64) ([]Track, error) {
 	return d.extractTracks(rows)
 }
 
-func (d *DB) GetTracksByKit(kit_id int64) ([]Track, error) {
-	q := trackSelect + "where track.kit_id = $1 order by track.title asc;"
+func (d *DB) GetTracksByKit(kit_id int64, sort, dir string) ([]Track, error) {
+	q := trackSelect + "where track.kit_id = $1 order by " + sortObj(sort) + " " + dir + ";"
 	rows, err := d.db.Query(q, kit_id)
 	if err != nil {
 		return nil, err
@@ -176,8 +177,22 @@ func (d *DB) GetTracksByKit(kit_id int64) ([]Track, error) {
 	return d.extractTracks(rows)
 }
 
-func (d *DB) GetAllTracks() ([]Track, error) {
-	q := trackSelect + "order by track.title asc;"
+func sortObj(s string) string {
+	switch s {
+	case "kit":
+		return "kit.name"
+	case "vox":
+		return "vox.name"
+	case "era":
+		return "era.name"
+	case "genre":
+		return "genre.name"
+	}
+	return "track." + s
+}
+
+func (d *DB) GetAllTracks(sort, dir string) ([]Track, error) {
+	q := trackSelect + "order by " + sortObj(sort) + " " + dir + ";"
 
 	rows, err := d.db.Query(q)
 	if err != nil {

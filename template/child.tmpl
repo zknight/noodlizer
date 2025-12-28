@@ -20,20 +20,20 @@
         {{ template "head" .}}
         <div id="main">
             <div id="content">
-            <fieldset><legend>{{ .Kind }} Information <a href="/{{.Kind}}/{{.Id}}/edit">[edit]</a></legend>
+            <fieldset><legend>{{ .Kind }} Information <!--a href="/{{.Kind}}/{{.Id}}/edit">[edit]</a--></legend>
                 <span class="main-field"> {{ .Obj.ProperName }}</span><br/>
             </fieldset>
             <fieldset><legend>Associated Songs</legend>
                 <table id='tracks'>
                     <tr>
-                        <th><a href="#">Title</a></th>
-                        <th><a href="#">Tempo (BPM)</a></th>
+                        <th><a href="/{{.Kind}}/{{.Id}}?sort=title&dir={{.Parms.title}}">Title</a></th>
+                        <th><a href="/{{.Kind}}/{{.Id}}?sort=tempo&dir={{.Parms.tempo}}">Tempo (BPM)</a></th>
                         <!--th><a href="#">Vocalist</a></th -->
-                        <th><a href="#">Era</a></th>
-                        <th><a href="#">Genre</a></th>
-                        <th><a href="#">Kit</a></th>
-                        <th><a href="#">Clicktrack?</a></th>
-                        <th colspan=2></th>
+                        <th><a href="/{{.Kind}}/{{.Id}}?sort=era&dir={{.Parms.era}}">Era</a></th>
+                        <th><a href="/{{.Kind}}/{{.Id}}?sort=genre&dir={{.Parms.genre}}">Genre</a></th>
+                        <th><a href="/{{.Kind}}/{{.Id}}?sort=kit&dir={{.Parms.kit}}">Kit</a></th>
+                        <th><a href="/{{.Kind}}/{{.Id}}?sort=click&dir={{.Parms.click}}">Clicktrack?</a></th>
+                        <th colspan=1></th>
                     </tr>
                     {{ range .Tracks }}
                     <tr>
@@ -45,7 +45,6 @@
                         <td><a href="/kit/{{.Kit.Id}}">{{.Kit.ProperName}}</a></td>
                         <td>{{if .Click}}yes{{else}}no{{end}}</a></td>
                         <td><a href="/track/{{.Id}}/edit">edit</a></td>
-                        <td><a href="/track/{{.Id}}/del">delete</a></td>
                     </tr>
                     {{ end }} <!-- range -->
                 </table>

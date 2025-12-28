@@ -13,12 +13,15 @@ import (
 	"noodlizer/db"
 )
 
+type StrMap map[string]string
+
 type View struct {
-	db      *db.DB
-	index   *template.Template
-	ws_mtx  sync.Mutex
-	subs    map[*subscriber]struct{}
-	waiters map[string]struct{}
+	db       *db.DB
+	index    *template.Template
+	ws_mtx   sync.Mutex
+	subs     map[*subscriber]struct{}
+	waiters  map[string]struct{}
+	parammap StrMap
 }
 
 type trackInfo struct {
@@ -35,6 +38,17 @@ func NewView(db *db.DB, tpath string) *View {
 		db:      db,
 		subs:    make(map[*subscriber]struct{}),
 		waiters: make(map[string]struct{}),
+	}
+
+	v.parammap = StrMap{
+		"title":    "asc",
+		"tempo":    "asc",
+		"vox":      "asc",
+		"era":      "asc",
+		"genre":    "asc",
+		"kit":      "asc",
+		"click":    "asc",
+		"key_tone": "asc",
 	}
 
 	// static path
@@ -98,6 +112,28 @@ func NewView(db *db.DB, tpath string) *View {
 	return v
 }
 
+// utils
+func flipDir(s string) string {
+	dir := "asc"
+	if s == "asc" {
+		dir = "desc"
+	}
+	return dir
+}
+
+func (v *View) getSortColumn(r *http.Request) (string, string) {
+	sort := r.URL.Query().Get("sort")
+	dir := r.URL.Query().Get("dir")
+	if sort != "" && dir != "" {
+		v.parammap[sort] = flipDir(dir)
+	} else {
+		sort = "title"
+		dir = "asc"
+		v.parammap["title"] = "desc"
+	}
+	return sort, dir
+}
+
 // Handler functions for web service
 
 // index
@@ -140,7 +176,7 @@ func (v *View) EditSet(w http.ResponseWriter, r *http.Request) {
 		io.WriteString(w, err.Error())
 		return
 	}
-	tracks, err := v.db.GetAllTracks()
+	tracks, err := v.db.GetAllTracks("title", "asc")
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -413,14 +449,32 @@ func (v *View) UpdateSetlist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (v *View) ShowAllTracks(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Show Tracks.")
-	tracks, err := v.db.GetAllTracks()
+	/*
+		fmt.Println(r.URL)
+		sort := r.URL.Query().Get("sort")
+		dir := r.URL.Query().Get("dir")
+		if sort != "" && dir != "" {
+			v.parammap[sort] = flipDir(dir)
+		} else {
+			sort = "title"
+			dir = "asc"
+			v.parammap["title"] = "desc"
+		}
+		fmt.Println("sort:", sort, "dir:", dir)
+	*/
+	//fmt.Println("Show Tracks.")
+	sort, dir := v.getSortColumn(r)
+	tracks, err := v.db.GetAllTracks(sort, dir)
 	fmt.Println("track cnt: ", len(tracks))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
-	err = v.index.ExecuteTemplate(w, "tracks.tmpl", struct{ Tracks []db.Track }{Tracks: tracks})
+	err = v.index.ExecuteTemplate(w, "tracks.tmpl", struct {
+		Tracks []db.Track
+		Parms  StrMap
+	}{Tracks: tracks, Parms: v.parammap})
+
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
@@ -663,7 +717,8 @@ func (v *View) ShowVox(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tracks, err := v.db.GetTracksByVox(int64(id))
+	sort, dir := v.getSortColumn(r)
+	tracks, err := v.db.GetTracksByVox(int64(id), sort, dir)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -673,7 +728,8 @@ func (v *View) ShowVox(w http.ResponseWriter, r *http.Request) {
 		Id     int
 		Obj    db.Child
 		Tracks []db.Track
-	}{Kind: "Vox", Id: id, Obj: vox, Tracks: tracks}
+		Parms  StrMap
+	}{Kind: "vox", Id: id, Obj: vox, Tracks: tracks, Parms: v.parammap}
 	err = v.index.ExecuteTemplate(w, "child.tmpl", x)
 	if err != nil {
 		io.WriteString(w, err.Error())
@@ -706,7 +762,8 @@ func (v *View) ShowEra(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tracks, err := v.db.GetTracksByEra(int64(id))
+	sort, dir := v.getSortColumn(r)
+	tracks, err := v.db.GetTracksByEra(int64(id), sort, dir)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -716,7 +773,8 @@ func (v *View) ShowEra(w http.ResponseWriter, r *http.Request) {
 		Id     int
 		Obj    db.Child
 		Tracks []db.Track
-	}{Kind: "Era", Id: id, Obj: era, Tracks: tracks}
+		Parms  StrMap
+	}{Kind: "era", Id: id, Obj: era, Tracks: tracks, Parms: v.parammap}
 	err = v.index.ExecuteTemplate(w, "child.tmpl", x)
 	if err != nil {
 		io.WriteString(w, err.Error())
@@ -743,13 +801,15 @@ func (v *View) ShowGenre(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Println("Show Genre ", id)
+
 	genre, err := v.db.GetGenre(int64(id))
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
 	}
 
-	tracks, err := v.db.GetTracksByGenre(int64(id))
+	sort, dir := v.getSortColumn(r)
+	tracks, err := v.db.GetTracksByGenre(int64(id), sort, dir)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -759,7 +819,8 @@ func (v *View) ShowGenre(w http.ResponseWriter, r *http.Request) {
 		Id     int
 		Obj    db.Child
 		Tracks []db.Track
-	}{Kind: "Genre", Id: id, Obj: genre, Tracks: tracks}
+		Parms  StrMap
+	}{Kind: "genre", Id: id, Obj: genre, Tracks: tracks, Parms: v.parammap}
 	err = v.index.ExecuteTemplate(w, "child.tmpl", x)
 	if err != nil {
 		io.WriteString(w, err.Error())
@@ -792,7 +853,8 @@ func (v *View) ShowKit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tracks, err := v.db.GetTracksByKit(int64(id))
+	sort, dir := v.getSortColumn(r)
+	tracks, err := v.db.GetTracksByKit(int64(id), sort, dir)
 	if err != nil {
 		io.WriteString(w, err.Error())
 		return
@@ -802,7 +864,8 @@ func (v *View) ShowKit(w http.ResponseWriter, r *http.Request) {
 		Id     int
 		Obj    db.Child
 		Tracks []db.Track
-	}{Kind: "Kit", Id: id, Obj: kit, Tracks: tracks}
+		Parms  StrMap
+	}{Kind: "kit", Id: id, Obj: kit, Tracks: tracks, Parms: v.parammap}
 	err = v.index.ExecuteTemplate(w, "child.tmpl", x)
 	if err != nil {
 		io.WriteString(w, err.Error())

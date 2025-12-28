@@ -12,15 +12,16 @@
                 <div class="submenu"><a href="/track/new">Add New Song</a></div>
                 <table id='tracks'>
                     <tr>
-                        <th><a href="#">Title</a></th>
-                        <th><a href="#">Tempo (BPM)</a></th>
-                        <th><a href="#">Vocalist</a></th>
-                        <th><a href="#">Era</a></th>
-                        <th><a href="#">Genre</a></th>
-                        <th><a href='#'>Keyboard Tone</a></th>
-                        <th><a href="#">Kit</a></th>
-                        <th><a href="#">Clicktrack?</a></th>
-                        <th colspan=2></th>
+                        <!--th><a href="/tracks?sort=title&dir=asc">Title</a></th-->
+                        <th><a href="/tracks?sort=title&dir={{.Parms.title}}">Title</a></th>
+                        <th><a href="/tracks?sort=tempo&dir={{.Parms.tempo}}">Tempo (BPM)</a></th>
+                        <th><a href="/tracks?sort=vox&dir={{.Parms.vox}}">Vocalist</a></th>
+                        <th><a href="/tracks?sort=era&dir={{.Parms.era}}">Era</a></th>
+                        <th><a href="/tracks?sort=genre&dir={{.Parms.genre}}">Genre</a></th>
+                        <th><a href='/tracks?sort=key_tone&dir={{.Parms.key_tone}}'>Keyboard Tone</a></th>
+                        <th><a href="/tracks?sort=kit&dir={{.Parms.kit}}">Kit</a></th>
+                        <th><a href="/tracks?sort=click&dir={{.Parms.click}}">Clicktrack?</a></th>
+                        <th colspan=1></th>
                     </tr>
                     {{ range .Tracks }}
                     <tr>
@@ -38,7 +39,7 @@
                         <td class="center"><a href="/kit/{{.Kit.Id}}">{{.Kit.ProperName}}</a></td>
                         <td class="center">{{if .Click}}yes{{else}}no{{end}}</a></td>
                         <td class="center"><a href="/track/{{.Id}}/edit">edit</a></td>
-                        <td class="center"><a href="/track/{{.Id}}/del">delete</a></td>
+                        <!--td class="center"><a href="/track/{{.Id}}/del">delete</a></td-->
                     </tr>
                     {{ end }} <!-- range -->
                 </table>
