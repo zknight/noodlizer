@@ -11,7 +11,8 @@
             <div id="content">
             <fieldset><legend>Setlist Infomation<a href="/setlist/{{.Id}}/edit">EDIT</a></legend>
                 <span class="main-field">{{ .ProperName }}</span><br/>
-                <span class="sub-field">{{ .CreatedAt }}</span>
+                <!--span class="sub-field">{{ .CreatedAt }}</span-->
+                <a href="/setlist/{{.Id}}/print">Show Printable Setlist</a>
             </fieldset>
             <fieldset><legend>Associated Sets</legend>
                 <table id="sets">

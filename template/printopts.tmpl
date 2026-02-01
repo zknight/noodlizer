@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/style.css">
+        <title>Setlist: {{.ProperName}}</title>
+    </head>
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <div id="content">
+            <form class='edit' method="post" action="/setlist/{{.Id}}/print">
+                <fieldset><legend>Select Fields to Include:</legend>
+                <table>
+                <tr>
+                <td><label for="title">Song Title</label></td>
+                <td><input type="checkbox" name="title" id="title" checked /></td>
+                </tr>
+                <tr>
+                <td><label for="vox">Vocalist</label></td>
+                <td><input type="checkbox" name="vox" id="vox" checked /></td>
+                </tr>
+                <tr>
+                <td><label for="tempo">Tempo</label></td>
+                <td><input type="checkbox" name="tempo" id="tempo" checked /></td>
+                </tr>
+                <tr>
+                <td><label for="era">Era</label></td>
+                <td><input type="checkbox" name="era" id="era"/></td>
+                </tr>
+                <tr>
+                <td><label for="genre">Genre</label></td>
+                <td><input type="checkbox" name="genre" id="genre"/></td>
+                </tr>
+                <tr>
+                <td><label for="keytone">Keyboard Tone</label></td>
+                <td><input type="checkbox" name="keytone" id="keytone"/></td>
+                </tr>
+                <tr>
+                <td><label for="kit">Drum Kit</label></td>
+                <td><input type="checkbox" name="kit" id="kit"/></td>
+                </tr>
+                </table>
+                </fieldset>
+                <input type="submit">
+            </form>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+</html>

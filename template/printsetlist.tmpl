@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="/static/reset.css" />
+        <link rel="stylesheet" href="/static/style.css" />
+        <link rel="stylesheet" href="/static/print.css" media="print" />
+        <title>Setlist: {{.Setlist.ProperName}}</title>
+    </head>
+    <body>
+        {{ template "head" . }}
+        <div id="main">
+            <div id="content">
+            {{ $fields := .Fields }}
+            <h2>{{.Setlist.ProperName}}</h2>
+            {{ range .Setlist.Sets}}
+            <fieldset><legend>{{.ProperName}}</legend>
+                <table id='tracks' class="padded">
+                    {{ $sid := .Id }} 
+                    {{ $num := 1 }}
+                    {{ range .Tracks }}
+                    <tr>
+                        <td>#{{$num}}</td>
+                        {{ if $fields.Title }} <td><b>{{ .ProperTitle }}<b></td> {{ end }}
+                        {{ if $fields.Vox }} <td>{{ .Vox.ProperName }}</td>{{end}}
+                        {{ if $fields.Tempo }} <td>{{ .Tempo }} BPM</td>{{end}}
+                        {{ if $fields.Era }} <td>{{ .Era.ProperName }}</td>{{end}}
+                        {{ if $fields.Genre }} <td>{{ .Genre.ProperName }}</td>{{end}}
+                        {{ if $fields.Keyboard }} <td>{{ .KeyTone }}</td>{{end}}
+                        {{ if $fields.Kit }} <td>{{ .Kit.ProperName }}</td>{{end}}
+                    </tr>
+                        {{ $num = inc $num }}
+                    {{ end }}
+                </table>
+            </fieldset>
+            {{ end }}
+            </div>
+        </div>
+        <div id="footer">
+        </div>
+    </body>
+</html>

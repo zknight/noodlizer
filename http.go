@@ -83,6 +83,8 @@ func NewView(db *db.DB, tpath string) *View {
 	http.HandleFunc("/setlist/{id}/create_set/{setnum}", v.CreateSet)
 	http.HandleFunc("POST /setlist/{id}/save_set", v.SaveSet)
 	http.HandleFunc("POST /setlist/{id}/update_set", v.UpdateSet)
+	http.HandleFunc("/setlist/{id}/print", v.GetPrintOpts)
+	http.HandleFunc("POST /setlist/{id}/print", v.ShowPrintableSetlist)
 	http.HandleFunc("/track/new", v.NewTrack)
 	http.HandleFunc("/track/{id}", v.ShowTrack)
 	http.HandleFunc("/track/{id}/edit", v.EditTrack)
@@ -378,6 +380,69 @@ func (v *View) ShowSetlist(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		io.WriteString(w, err.Error())
 	}
+}
+
+func (v *View) GetPrintOpts(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	setlist, err := v.db.GetSetlist(int64(id))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	err = v.index.ExecuteTemplate(w, "printopts.tmpl", setlist)
+	if err != nil {
+		io.WriteString(w, err.Error())
+	}
+}
+
+type Fieldsel struct {
+	Title    bool
+	Vox      bool
+	Tempo    bool
+	Era      bool
+	Genre    bool
+	Keyboard bool
+	Kit      bool
+}
+
+func (v *View) ShowPrintableSetlist(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	setlist, err := v.db.GetSetlist(int64(id))
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	err = r.ParseForm()
+	if err != nil {
+		io.WriteString(w, err.Error())
+		return
+	}
+	fields := Fieldsel{
+		Title:    r.PostFormValue("title") == "on",
+		Vox:      r.PostFormValue("vox") == "on",
+		Tempo:    r.PostFormValue("tempo") == "on",
+		Era:      r.PostFormValue("era") == "on",
+		Genre:    r.PostFormValue("genre") == "on",
+		Keyboard: r.PostFormValue("keyboard") == "on",
+		Kit:      r.PostFormValue("kit") == "on",
+	}
+
+	//fmt.Printf("%v\n", fields)
+	//fmt.Printf("%v\n", setlist)
+
+	err = v.index.ExecuteTemplate(w, "printsetlist.tmpl", struct {
+		Setlist db.Setlist
+		Fields  Fieldsel
+	}{Setlist: setlist, Fields: fields})
+
 }
 
 func (v *View) CreateSetlist(w http.ResponseWriter, r *http.Request) {

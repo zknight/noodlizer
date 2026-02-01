@@ -1,0 +1,25 @@
+/* for printing */
+@media print {
+    @page {
+        size: 8.5in 11in;
+        margin-top: 0.5in;
+    }
+    * {
+        color: black;
+    }
+    a {
+        color: black;
+    }
+    #header {
+        display: none !important;
+    }
+    #tracks {
+        break-after: page;
+    }
+    /*#tracks:last-child {
+        break-after: avoid;
+    }*/
+    table {
+        width:100%;
+    }
+}
