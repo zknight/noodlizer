@@ -77,24 +77,32 @@ func (d *DB) init() error {
 		timestamp INTEGER NOT NULL
 	);
 	drop table if exists a_set;
-	create table a_set {
+	create table a_set (
 		id INTEGER primary key,
 		setlist_id INTEGER NOT NULL
 		name TEXT NOT NULL,
 		setnum INTEGER NOT NULL
-	};
+	);
 	drop table if exists sets_tracks;
-	create table sets_tracks {
+	create table sets_tracks (
 		set_id INTEGER NOT NULL,
 		track_id INTEGER NOT NULL,
 		seq INTEGER NOT NULL
-	};
-	drop table if exists gig {
+	);
+	drop table if exists gig;
+	create table gig (
 		id INTEGER primary key,
-		obj BLOB NOT NULL,
-	}
+		obj BLOB NOT NULL
+	);
 	`)
-
+	if err != nil {
+		return err
+	}
+	err = d.createPenduserTable()
+	if err != nil {
+		return err
+	}
+	err = d.createUserTable()
 	return err
 }
 

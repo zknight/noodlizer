@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width-device=width, initial-scale=1.0, viewport-fit=cover"/>
         <link rel="stylesheet" href="/static/reset.css">
-        <link rel="stylesheet" href="/static/style.css">
-        <title>Setlist: {{.ProperName}}</title>
+        <link rel="stylesheet" href="/static/layout.css">
     </head>
     <body>
-        {{ template "head" . }}
-        <div id="main">
+        <div id="wrapper">
+            <div id="header">
+                <div id="view-name">|CHANGE ME|</div>
+            </div>
+        <div id="view">
+            <div id="view-title">
+            |CHANGE ME|
+            </div>
             <div id="content">
+            </form>
             </div>
         </div>
-        <div id="footer">
-        </div>
     </body>
-<html>
+</html>

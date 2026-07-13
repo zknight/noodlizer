@@ -1,0 +1,174 @@
+* {
+    font-family:'Gill Sans', 'Gill Sans MT', 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+body {
+    background-color:#111;
+}
+#wrapper {
+    background-color: #555; /* TODO: change me */
+}
+#header {
+    display: flex;
+}
+#mode-btn {
+    margin-top: 5px;
+    margin-left: auto;
+    margin-right: 10px;
+}
+#view-name {
+    padding: 2px 10px;
+    font-size: 20px;
+    color: goldenrod;
+    background: midnightblue;
+}
+a.btn {
+    border: 1px solid #005;
+    padding: 2px 10px;
+    text-decoration: none;
+    color: aliceblue;
+    background-color: darkgoldenrod;
+    border-radius: 4px;
+}
+#menu {
+    /*border: 1px solid green;*/
+    background: midnightblue;
+    color: darkgoldenrod;
+}
+#list {
+    flex-grow:0;
+    flex-basis:200px;
+    /*border: 1px solid blue;*/
+    background: #888;
+}
+#view {
+    flex-grow:1;
+    /*border: 1px solid red;*/
+    background: #CCC;
+}
+#content {
+    /*min-width:400px;*/
+    border: 1px solid black;
+}
+#inner {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2px;
+    /*flex-wrap: wrap;*/
+    /*align-items: stretch;*/
+    padding:4px;
+    border-top:1px solid goldenrod;
+}
+#context-ctrl {
+    display:flex;
+    flex-direction:row;
+    gap:2px;
+    align-items:stretch;
+    justify-content: center;
+    border-top:1px solid #005;
+    background-color: #116;
+}
+.vert-list {
+    flex: 1 1 auto;
+    display:flex;
+    flex-direction: column;
+    align-items: stretch;
+    text-align:center;
+    margin:10px 0px;
+    /*border-left: 1px dashed #448;*/
+}
+.menu-item {
+    display: block;
+    color: aliceblue;
+    font-size: 14pt;
+    background-color: darkgoldenrod;
+    padding:1px 3px;
+    text-decoration: none;
+    min-width:60px;
+    /*flex: 1 1 auto;*/
+    text-align: center;
+    border-top-left-radius: 4px;
+}
+.menu-item.sel {
+    background-color: midnightblue;
+    color: gold;
+    border: 1px solid goldenrod;
+    border-bottom: none;
+    text-shadow:1px 2px 3px rgb(245, 202, 92);
+}
+.menu-item:hover {
+    background-color: #999;
+    color: #333;
+}
+.check-entry {
+    text-align:center;
+    display: flex;
+    padding: 1px 0px 1px 18px;
+    font-size:12pt;
+}
+.check-entry label {
+    margin-left: 10px;
+}
+#grabber {
+    margin-top:4px;
+    border:none;
+    border-top: 4px double #555; 
+    color: #555;
+    overflow: visible;
+    text-align:center;
+    height:10px;
+}
+#grabber::after {
+    color: #555;
+    font-size:12px;
+    content: "⧗";
+    padding: 0 1px;
+    position: relative;
+    top: -15px;
+}
+#list ul {
+    margin: 0;
+    padding: 0;
+}
+#list ul li {
+        list-style: none;
+}
+#view-title {
+    padding: 4px;
+    background-color: #111;
+    color: #aaa;
+    font-size: 16px;
+    font-weight: bold;
+    text-align:center;
+}
+#song-list {
+    width: stretch;
+    background-color:#005;
+    color:goldenrod;
+}
+#song-list th {
+    color: gold;
+    padding: 2px 10px;
+    text-align:left;
+}
+#song-list td {
+    padding: 2px 10px;
+}
+#song-list tr:nth-child(even) {
+    background-color:#116;
+}
+
+/* styles... maybe extract to another css... */
+.title {
+    font-weight:bold;
+    text-shadow: 1px 1px 5px black;
+    color: #88f;
+    background-color:#005;
+    border-bottom: 1px solid black;
+}
+/*
+@media (min-width:600px) {
+    #wrapper { flex-direction: row;}
+    #inner { flex-direction: column;}
+}
+    */

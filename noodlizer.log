@@ -1,0 +1,117 @@
+noodlizer2026/04/05 11:22:30 log.go:69: [info] Nice to see you.
+noodlizer2026/04/05 11:24:55 main.go:26: [info] Nice to see you.
+noodlizer2026/04/05 12:05:11 main.go:26: [info] Nice to see you.
+noodlizer2026/04/05 12:05:24 main.go:26: [info] Nice to see you.
+noodlizer2026/04/05 12:13:46 main.go:28: [info] Nice to see you.
+noodlizer2026/07/10 11:51:15 main.go:30: [info] Nice to see you.
+noodlizer2026/07/10 11:52:09 view.go:48: [info] cookie not set
+noodlizer2026/07/10 11:55:17 view.go:42: [info] Cleaning up... done.
+noodlizer2026/07/10 11:55:31 main.go:30: [info] Nice to see you.
+noodlizer2026/07/10 11:55:36 view.go:49: [info] cookie not set
+noodlizer2026/07/10 11:55:55 view.go:42: [info] Cleaning up... done.
+noodlizer2026/07/10 11:56:21 main.go:30: [info] Nice to see you.
+noodlizer2026/07/10 11:56:25 view.go:55: [info] ndlzr
+noodlizer2026/07/10 11:56:25 view.go:56: [info] mycookie
+noodlizer2026/07/10 11:56:37 view.go:42: [info] Cleaning up... done.
+noodlizer2026/07/10 12:07:21 main.go:30: [info] Nice to see you.
+noodlizer2026/07/10 12:07:32 view.go:49: [info] cookie not set
+noodlizer2026/07/10 12:07:36 view.go:55: [info] ndlzr
+noodlizer2026/07/10 12:07:36 view.go:56: [info] mycookie
+noodlizer2026/07/10 12:07:45 view.go:55: [info] ndlzr
+noodlizer2026/07/10 12:07:45 view.go:56: [info] mycookie
+noodlizer2026/07/10 12:07:46 view.go:55: [info] ndlzr
+noodlizer2026/07/10 12:07:46 view.go:56: [info] mycookie
+noodlizer2026/07/10 12:08:02 view.go:42: [info] Cleaning up... done.
+noodlizer2026/07/11 12:11:28 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 12:11:49 view.go:64: [info] Cleaning up... done.
+noodlizer2026/07/11 12:15:16 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 12:15:37 view.go:64: [info] Cleaning up... done.
+noodlizer2026/07/11 12:18:30 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 12:18:30 view.go:64: [info] Cleaning up... done.
+noodlizer2026/07/11 12:18:35 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 12:18:35 view.go:49: [info] Adding static route: -static
+noodlizer2026/07/11 12:19:02 view.go:66: [info] Cleaning up... done.
+noodlizer2026/07/11 12:50:18 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 12:51:17 view.go:48: [info] template path: -./
+noodlizer2026/07/11 12:51:49 view.go:50: [info] Adding static route: -static
+noodlizer2026/07/11 12:53:46 view.go:74: [info] cookie not set
+noodlizer2026/07/11 12:54:01 view.go:88: [err] write tcp [::1]:8080->[::1]:52597: i/o timeout
+noodlizer2026/07/11 12:54:46 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 12:54:46 view.go:49: [info] Adding static route: -static
+noodlizer2026/07/11 12:54:50 view.go:73: [info] cookie not set
+noodlizer2026/07/11 12:54:56 view.go:79: [info] ndlzr
+noodlizer2026/07/11 12:54:56 view.go:80: [info] mycookie
+noodlizer2026/07/11 12:55:13 view.go:66: [info] Cleaning up... done.
+noodlizer2026/07/11 12:55:21 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 12:55:21 view.go:48: [info] template path: -./
+noodlizer2026/07/11 12:55:21 view.go:50: [info] Adding static route: -static
+noodlizer2026/07/11 12:55:31 view.go:80: [info] ndlzr
+noodlizer2026/07/11 12:55:31 view.go:81: [info] mycookie
+noodlizer2026/07/11 12:55:41 view.go:67: [info] Cleaning up... done.
+noodlizer2026/07/11 12:59:55 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 12:59:55 view.go:50: [info] template path: -./
+noodlizer2026/07/11 12:59:55 view.go:52: [info] Adding static route: -static
+noodlizer2026/07/11 13:00:05 view.go:69: [info] Cleaning up... done.
+noodlizer2026/07/11 13:14:35 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 13:14:35 view.go:50: [info] template path: -./
+noodlizer2026/07/11 13:14:35 view.go:52: [info] Adding static route: -static
+noodlizer2026/07/11 13:15:40 view.go:69: [info] Cleaning up... done.
+noodlizer2026/07/11 13:15:43 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 13:15:43 view.go:51: [info] template path: -./
+noodlizer2026/07/11 13:15:43 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/11 13:17:06 view.go:70: [info] Cleaning up... done.
+noodlizer2026/07/11 13:17:09 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 13:17:09 view.go:51: [info] template path: -./
+noodlizer2026/07/11 13:17:09 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/11 13:22:43 view.go:71: [info] Cleaning up... done.
+noodlizer2026/07/11 13:22:47 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 13:22:47 view.go:51: [info] template path: -./
+noodlizer2026/07/11 13:22:47 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/11 13:27:35 view.go:71: [info] Cleaning up... done.
+noodlizer2026/07/11 13:27:40 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 13:27:40 view.go:51: [info] template path: -./
+noodlizer2026/07/11 13:27:40 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/11 13:31:01 view.go:71: [info] Cleaning up... done.
+noodlizer2026/07/11 13:31:05 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 13:31:05 view.go:51: [info] template path: -./
+noodlizer2026/07/11 13:31:05 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/11 13:35:26 view.go:72: [info] Cleaning up... done.
+noodlizer2026/07/11 13:35:26 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 13:35:26 view.go:51: [info] template path: -./
+noodlizer2026/07/11 13:35:26 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/11 13:41:02 view.go:72: [info] Cleaning up... done.
+noodlizer2026/07/11 14:10:27 main.go:30: [info] Nice to see you.
+noodlizer2026/07/11 14:10:27 view.go:51: [info] template path: -./
+noodlizer2026/07/11 14:10:27 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/12 13:46:11 view.go:73: [info] Cleaning up... done.
+noodlizer2026/07/12 13:46:15 main.go:30: [info] Nice to see you.
+noodlizer2026/07/12 13:46:15 view.go:51: [info] template path: -./
+noodlizer2026/07/12 13:46:15 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/12 13:46:33 view.go:73: [info] Cleaning up... done.
+noodlizer2026/07/12 13:46:36 main.go:30: [info] Nice to see you.
+noodlizer2026/07/12 13:46:36 view.go:51: [info] template path: -./
+noodlizer2026/07/12 13:46:36 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/12 13:46:44 view.go:73: [info] Cleaning up... done.
+noodlizer2026/07/12 13:47:13 main.go:30: [info] Nice to see you.
+noodlizer2026/07/12 13:47:13 view.go:51: [info] template path: -./
+noodlizer2026/07/12 13:47:13 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/12 13:51:17 view.go:73: [info] Cleaning up... done.
+noodlizer2026/07/12 13:51:21 main.go:30: [info] Nice to see you.
+noodlizer2026/07/12 13:51:21 view.go:51: [info] template path: -./
+noodlizer2026/07/12 13:51:21 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/12 13:51:25 view.go:90: [info] ndlzr
+noodlizer2026/07/12 13:51:25 view.go:91: [info] mycookie
+noodlizer2026/07/12 13:52:28 view.go:73: [info] Cleaning up... done.
+noodlizer2026/07/12 13:54:34 main.go:30: [info] Nice to see you.
+noodlizer2026/07/12 13:54:34 view.go:51: [info] template path: -./
+noodlizer2026/07/12 13:54:34 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/12 13:55:03 view.go:125: [err] SQL logic error: table penduser has no column named notes (1)
+noodlizer2026/07/12 14:23:55 view.go:73: [info] Cleaning up... done.
+noodlizer2026/07/12 14:24:00 main.go:30: [info] Nice to see you.
+noodlizer2026/07/12 14:24:00 view.go:51: [info] template path: -./
+noodlizer2026/07/12 14:24:00 view.go:53: [info] Adding static route: -static
+noodlizer2026/07/12 14:24:08 admin.go:13: [err] sql: Scan error on column index 4, name "notes": converting NULL to string is unsupported
+noodlizer2026/07/12 14:28:07 view.go:75: [info] Cleaning up... done.
+noodlizer2026/07/12 14:28:10 main.go:30: [info] Nice to see you.
+noodlizer2026/07/12 14:28:10 view.go:51: [info] template path: -./
+noodlizer2026/07/12 14:28:10 view.go:53: [info] Adding static route: -static

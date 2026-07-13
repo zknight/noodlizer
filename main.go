@@ -4,18 +4,71 @@ import (
 	"context"
 	"encoding/csv"
 	"fmt"
-	"net/http"
+	nhttp "net/http"
 	"os"
 	"os/signal"
-	"path/filepath"
+	_ "path/filepath"
 	"strconv"
 	"strings"
 	"syscall"
+	"time"
 
+	"noodlizer/config"
 	"noodlizer/db"
+	"noodlizer/http"
+	"noodlizer/logging"
 )
 
 func main() {
+	c := config.Load(os.Args[1])
+	l, err := logging.NewLog(*c)
+	if err != nil {
+		panic("Failed to create logger:" + err.Error())
+	}
+	defer l.Close()
+
+	l.Info("Nice to see you.")
+
+	// TODO: Load the database
+	tdb, err := db.OpenDB(c.DatabasePath)
+
+	// create the main view
+	v := http.NewView(tdb, l)
+	v.AddRoutes(c.TemplatePath)
+	defer v.Cleanup()
+
+	// fire up the server
+	svr := nhttp.Server{
+		Addr:         c.HostAddr,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		Handler:      v.Handle(),
+	}
+
+	done := make(chan struct{})
+	go func() {
+		sigc := make(chan os.Signal, 100)
+		signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
+		<-sigc
+
+		if err := svr.Shutdown(context.Background()); err != nil {
+			l.Error("error shutting shit down ", err.Error())
+		}
+		close(done)
+	}()
+
+	if err := svr.ListenAndServe(); err != nhttp.ErrServerClosed {
+		l.Error("Error ListenAndServer: ", err.Error())
+	}
+	// TODO: Clean up the gigs...
+	// err = tdb.CleanupGigs()
+	// if err != nil {
+	// 		l.Error("Error cleaning up ", err.Error())
+	// }
+
+}
+
+func oldmain() {
 	argc := len(os.Args)
 
 	if argc < 2 {
@@ -45,35 +98,37 @@ func serve(data_path string) {
 	//http.HandleFunc("/{$}", Index)
 	// open DB
 	//tdb, err := db.OpenDB("tracks.db")
-	dbp := filepath.Join(data_path, "tracks.db")
-	tdb, err := db.OpenDB(dbp)
-	if err != nil {
-		fmt.Println("Error opening track database: ", err.Error())
-		os.Exit(1)
-	}
-	_ = NewView(tdb, data_path)
-	svr := http.Server{Addr: ":8080"}
-	done := make(chan struct{})
-	go func() {
-		sigc := make(chan os.Signal, 100)
-		signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
-		<-sigc
-
-		if err := svr.Shutdown(context.Background()); err != nil {
-			fmt.Println("Error shutting shit down: ", err.Error())
+	/*
+		dbp := filepath.Join(data_path, "tracks.db")
+		tdb, err := db.OpenDB(dbp)
+		if err != nil {
+			fmt.Println("Error opening track database: ", err.Error())
+			os.Exit(1)
 		}
-		close(done)
-	}()
+		_ = NewView(tdb, data_path)
+		svr := http.Server{Addr: ":8080"}
+		done := make(chan struct{})
+		go func() {
+			sigc := make(chan os.Signal, 100)
+			signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
+			<-sigc
 
-	if err := svr.ListenAndServe(); err != http.ErrServerClosed {
-		fmt.Println("Error ListenAndServe: ", err.Error())
-	}
-	// clean up the gigs...
-	fmt.Printf("Cleaning up...")
-	err = tdb.CleanupGigs()
-	if err != nil {
-		fmt.Println("Error cleaning up: ", err.Error())
-	}
+			if err := svr.Shutdown(context.Background()); err != nil {
+				fmt.Println("Error shutting shit down: ", err.Error())
+			}
+			close(done)
+		}()
+
+		if err := svr.ListenAndServe(); err != http.ErrServerClosed {
+			fmt.Println("Error ListenAndServe: ", err.Error())
+		}
+		// clean up the gigs...
+		fmt.Printf("Cleaning up...")
+		err = tdb.CleanupGigs()
+		if err != nil {
+			fmt.Println("Error cleaning up: ", err.Error())
+		}
+	*/
 }
 
 func flimport(infile, dbfile string) {

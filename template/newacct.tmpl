@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width-device=width, initial-scale=1.0, viewport-fit=cover"/>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/layout.css">
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+                <div id="view-name">Request a Noodlizer Account</div>
+            </div>
+        <div id="view">
+            <div id="view-title">
+            Request a new account
+            </div>
+            <div id="content">
+                <p>
+                Enter your desired credentials and user information to request access to 
+                Noodlizer. The administrator will review and process your request, and you
+                will get an email regarding disposition in a jiffy.
+                </p>
+            <form class='login' method="post" action="/newacct">
+                <fieldset><legend>User Info</legend>
+                <label for="firstname">First Name</legend>
+                <input type="text" name="firstname" id="firstname" />
+                <label for="lastname">Last Name</legend>
+                <input type="text" name="lastname" id="lastname" />
+                <br/>
+                <label for="email">Email Address</legend>
+                <input type="text" name="email" id="email" />
+                </fieldset>
+                <fieldset><legend>Credentials</legend> 
+                <label for="loginid">Requested Login ID</label>
+                <input type="text" name="loginid" id="loginid" />
+                </fieldset>
+                <fieldset><legend>Notes to Admin (e.g. band name)</legend>
+                <input type="textarea" name="notes" id="notes" />
+                <input type="submit"/>
+            </form>
+            </div>
+        </div>
+    </body>
+</html>

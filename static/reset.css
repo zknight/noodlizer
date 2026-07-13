@@ -13,6 +13,9 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+table {
+  border-collapse: collapse;
+}
 img, picture, video, canvas, svg {
   display: block;
   max-width: 100%;

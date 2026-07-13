@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width-device=width, initial-scale=1.0, viewport-fit=cover"/>
+        <link rel="stylesheet" href="/static/reset.css">
+        <link rel="stylesheet" href="/static/layout.css">
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+                <div id="view-name">Log in to Noodlizer</div>
+            </div>
+        <div id="view">
+            <div id="view-title">
+            Log in, Please. Or, <a href="/newacct">Request a new account</a>
+            </div>
+            <div id="content">
+            <form class='login' method="post" action="/login">
+                <fieldset><legend>Credentials</legend> 
+                <label for="loginid">Login ID</label>
+                <input type="text" name="loginid" id="loginid" />
+                <label for="passphrase">Passphrase</label>
+                <input type="password" name="passprhase" id="passphrase" />
+                </fieldset>
+                <input type="submit"/>
+            </form>
+            </div>
+        </div>
+    </body>
+</html>

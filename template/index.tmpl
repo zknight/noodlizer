@@ -1,26 +1,91 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <meta name="viewport" content="width-device=width, initial-scale=1.0, viewport-fit=cover"/>
         <link rel="stylesheet" href="/static/reset.css">
-        <link rel="stylesheet" href="/static/style.css">
-        <title>N o o d l i z e r</title>
+        <link rel="stylesheet" href="/static/layout.css">
+        <script type='text/javascript' src='/static/nzr.js'></script>
     </head>
     <body>
-        {{ template "head" . }}
-        <div id="main">
-            <div id="content">
-            <p><span class="big">This is the Setlist Noodlizer.</span></p>
-            <p style="text-align:center;">What would you like to do?</p>
-            <div id="main-menu">
-                <ul>
-                <li><a href="/gig">Start a Gig</a> to display lyrics for a Setlist</li>
-                <li><a href="/tracks">Manage Songs</a></li>
-                <li><a href="/setlists">List/Create/Update Setlist</a></li>
-                <li>Manage classification: <a href="/eras">Eras</a> and <a href="/genres">Genres</a>
-                </ul>
+        <div id="wrapper">
+            <div id="header">
+                <div id="view-name">Manage Mode</div>
+                <div id="mode-btn"><a class="btn" href="/giggin">Go Gig Mode</a></div>
+            </div>
+            <div id="menu">
+                <div id="inner">
+                    <a class="menu-item sel" href="#song">Songs</a>
+                    <a class="menu-item" href="#setlist">Setlists</a>
+                    <a class="menu-item" href="#admin">Admin</a>
+                </div>
+                <div id="context-ctrl">
+                    <div class="vert-list">
+                        <span class="title">Vocalist</span>
+                        <div class="check-entry"><input id='vox-maddi' type="checkbox"/><label for='vox-maddi'>Maddi</label></div>
+                        <div class="check-entry"><input id='vox-david' type="checkbox"/><label for='vox-david'>David</label></div>
+                        <div class="check-entry"><input id='vox-jeff' type="checkbox"/><label for='vox-jeff'>Jeff</label></div>
+                    </div>
+                    <div class="vert-list">
+                        <span class="title">Era</span>
+                        <div class="check-entry"><input id="era-60s" type="checkbox"/><label for="era-60s">1960s</label></div>
+                        <div class="check-entry"><input id="era-70s" type="checkbox"/><label for="era-70s">1970s</label></div>
+                        <div class="check-entry"><input id="era-80s" type="checkbox"/><label for="era-80s">1980s</label></div>
+                        <div class="check-entry"><input id="era-90s" type="checkbox"/><label for="era-90s">1990s</label></div>
+                        <div class="check-entry"><input id="era-00s" type="checkbox"/><label for="era-00s">2000s</label></div>
+                        <div class="check-entry"><input id="era-10s" type="checkbox"/><label for="era-10s">2010s</label></div>
+                    </div>
+                    <div class="vert-list">
+                        <span class="title">Genre</span>
+                        <div class="check-entry"><input id="genre-rock" type="checkbox"/><label for="genre-rock">Rock</label></div>
+                        <div class="check-entry"><input id="genre-country" type="checkbox"/><label for="genre-country">Country</label></div>
+                        <div class="check-entry"><input id="genre-pop" type="checkbox"/><label for="genre-pop">Pop</label></div>
+                        <div class="check-entry"><input id="genre-alt" type="checkbox"/><label for="genre-alt">Alt</label></div>
+                        <div class="check-entry"><input id="genre-soul" type="checkbox"/><label for="genre-soul">Soul</label></div>
+                    </div>
+                </div>
+                <div id="grabber" onclick="togviz('context-ctrl', 'flex');"></div>
+            </div>
+            <div id="view">
+                <div id="view-title">
+                    This is View [Name of view goes here]
+                </div>
+                <div id="content">
+                    <table id="song-list">
+                        <tr>
+                            <th>Title</th>
+                            <th>Vocalist</th>
+                            <th>Era</th>
+                            <th>Genre</th>
+                            <th>Tempo</th>
+                            <th>Kit</th>
+                        </tr>
+                        <tr>
+                            <td>1979</td>
+                            <td>Jeff</td>
+                            <td>1990s</td>
+                            <td>Alt</td>
+                            <td>105</td>
+                            <td>Rock</td>
+                        </tr>
+                        <tr>
+                            <td>If It Makes You Happy</td>
+                            <td>Maddi</td>
+                            <td>1990s</td>
+                            <td>Blues</td>
+                            <td>89</td>
+                            <td>Rock Trash</td>
+                        </tr>
+                        <tr>
+                            <td>Early Monring Shakes</td>
+                            <td>David</td>
+                            <td>2010s</td>
+                            <td>Country</td>
+                            <td>76</td>
+                            <td>Rock Trash</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
-        <div id="footer">
-        </div>
     </body>
-<html>
+</html>
